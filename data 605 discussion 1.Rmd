@@ -1,0 +1,91 @@
+---
+title: "DATA 605 Discussion Week 1"
+author: "Vinicio Haro"
+date: "August 29, 2018"
+output:
+  word_document: default
+  html_document: default
+---
+
+I will be solving Exercise SSLE.C33 (Problem 33 from Chapter SLE) with full explination. Find all solutions to the linear system: 
+
+$$
+x+y-z=-1\\ x-y-z=-1\\ z=2
+$$
+
+
+We identify this system as a system of three equations and three unkowns. One way to solve for the three variables is combination. We already know z=2,we can plug in the value of z into thefirst two equations.  
+
+$$
+x+y-2=-1\\x-y-2=-1
+$$
+Simplify the two equations, thus reducing a system of three equations three unknowns into 2 equations and 2 unknowns.
+
+$$
+x+y=1\\x-y=1
+$$
+
+Use substituion and solve for one variable in terms of the other. Lets solve the second equation in terms of x and plug that substitution into the first equation. 
+
+$$
+x+y=1\\
+x=1+y
+$$
+
+Replace x in the top equation with the bottom equation and solve for y
+
+$$
+(1+y)+y=1\\1+2y=1\\2y=0\\y=0
+$$
+Now we know the values for z and y. We can plug these values into any of the original equations to find the solution set for this system. Lets plug back into the original equation 1. Solve for x
+
+$$
+x+y-z=-1\\x+0-2=-1\\x+2=-1\\x=1
+$$
+The solution set is
+
+$$
+(x,y,z)=(1,0,2)
+$$
+
+Do these solutions work? Plug values back into original equation to verifiy 
+
+$$
+x+y-z=-1\\ x-y-z=-1\\ z=2
+$$
+
+$$
+1+0-2=-1\\ 1-0-2=-1\\ 2=2
+$$
+
+$$
+-1=-1\\-1=-1\\2=2
+$$
+
+Or we can use R to verify
+We define a coefficient matrix A and solution vector B
+
+```{r}
+library(matlib)
+
+A <- matrix(c(1, 1, -1,
+             1, -1, -1,
+             0,  0, 1), 3, 3, byrow=TRUE)
+colnames(A) <- paste0('x', 1:3)
+b <- c(-1, -1, 2)
+showEqn(A, b)
+```
+
+Solve 
+```{r}
+solve(A, b)
+```
+
+We have verified that we indeed have the correct solutions. 
+
+For systems of equations that are not so easy to solve by hand, one could consider row reduction methods (Gauss-Jordan Elimination)
+
+
+
+
+
