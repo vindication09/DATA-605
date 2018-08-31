@@ -1,0 +1,275 @@
+---
+title: "DATA 605 HW 1"
+author: "Vinicio Haro"
+date: "August 30, 2018"
+output: html_document
+---
+
+Problem Set 1)
+
+1) Calculate the dot product u.v where u = [0.5, 0.5] and v = [3, −4]
+-The dot product is defined as follows:
+
+Suppose we have n-dimensional vectors u and v
+$$
+u=<{ u }_{ 1 }+{ u }_{ 2 }+{ u }_{ 3 }+...{ u }_{ n }>\\ v=<{ v }_{ 1 }+{ v }_{ 2 }+{ v }_{ 3 }+...{ v }_{ n }>
+$$
+
+
+The Dot product between vectors u and v is computed as follows:
+$$
+u\cdot v={ (u }_{ 1 }\times { v }_{ 1 })+({ u }_{ 2 }\times { v }_{ 2 })+...+({ u }_{ n }\times { v }_{ n })=\sum _{ i=1 }^{ n }{ { u }_{ i }\cdot { v }_{ i } } 
+$$
+We are essentially taking the sum of products for each ith entry in the u vector and v vector. It is also known as the inner product
+
+We apply the process to compute the dot product of the given vectors
+$$
+u=<0.5,0.5>\\ v=<3,-4>\\ u\cdot v=(0.5\times 3)+(0.5\times -4)\\ u\cdot v=(1.5)+(-2)=-0.5
+$$
+
+Lets verify using R
+```{r}
+u<-c(0.5,0.5)
+v<-c(3,-4)
+sum(u*v)
+```
+
+
+2) What are the lengths of u and v? Please note that the mathematical notion of the
+length of a vector is not the same as a computer science definition. (Also known as the magnitude)
+
+The length of a vector u is defined as follows:
+$$
+u=<{ u }_{ 1 },{ u }_{ 2 },....{ u }_{ n }>\\ ||u||=\sqrt { { { (u }_{ 1 }) }^{ 2 }+{ ({ u }_{ 2 }) }^{ 2 }+...+{ { (u }_{ n }) }^{ 2 } } 
+$$
+
+We can now compute the lenghts of our vectors u and v 
+$$
+u=<0.5,0.5>\\ ||u||=\sqrt { (0.5)^{ 2 } + (0.5)^{2} }=0.7071068
+$$
+
+$$
+v=<3,-4>\\ ||u||=\sqrt { (3)^{ 2 } + (-4)^{2} }=5
+$$
+
+Lets verify using R
+u
+```{r}
+sqrt(sum(u^2))
+```
+
+v
+```{r}
+sqrt(sum(v^2))
+```
+
+
+3) What is the linear combination: 3u − 2v?
+-For this problem, we are performing operations that include multiplying a vector by a scalar quantity and plus/minus operations between two vectors. Recall the following;
+
+Let A be a non-zero real scalar and u some n dimensional vector, then the distributive property holds
+$$
+u=A<{ u }_{ 1 },{ u }_{ 2 },....{ u }_{ n }>=<{ Au }_{ 1 },{ Au }_{ 2 },....{ Au }_{ n }>
+$$
+
+Next we recall operations on vectors. In this problem we have at hand is subtraction between vectors
+
+Suppose we have vectors u and v and we want to subract vector v from u to form a new vector h, then the following procedure is defined:
+$$
+u- v={ (u }_{ 1 }- { v }_{ 1 }),({ u }_{ 2 }- { v }_{ 2 }),...,({ u }_{ n }- { v }_{ n })=h
+$$
+
+Apply the above concepts to our given vectors
+$$
+u=<0.5,0.5>\\v=<3,-4>\\3u-2v=\\3<0.5,0.5> - 2<3,-4>\\=<1.5,1.5>-<6,-8>\\=<(1.5-6),(1.5-(-8))>\\=< -4.5 , 9.5>
+$$
+
+Our resulting difference vector h is <-4.5 , 9.5>
+
+Lets verify using R
+```{r}
+3*u-2*v
+```
+
+4) What is the angle between u and v
+
+The angle between two vectors is defined as follows:
+
+Assume we have vectors u and v. The cosine of the angle between the two vectors is defined as follows:
+$$
+cos\theta =\frac { u\cdot v }{ ||u||\cdot ||v|| } 
+$$
+
+We want to solve for angle theta. We need to recall some pre-calculus concepts in order to solve for theta. Technically it is not proper to say something along the lines of "take the inverse cosine of both sides to cancel out the cos on the left" but it is helpful to guide someone to solve for theta. The equation can be re-written as follows:
+
+$$
+\theta =cos^{-1} ( \frac { u\cdot v }{ ||u||\cdot ||v|| } )
+$$
+
+
+Inside the arcosine, we compute the dot product between u and v in the numerator and divide by the product of the length u times length v. 
+
+We already found the dot product and the lengths for vectors u and v, so all we really need to do is to substitute those values into the equation
+
+$$
+\theta =cos^{-1} ( \frac { -0.5 }{ 0.7071068 \cdot 5 } )=cos^{-1}(-0.1414214)=1.712693
+$$
+
+We computed theta to be 1.712693 degrees. We should verify this using R. Someone has written a way to write this formula to a function. Lets use this very helpful resource. Original post here https://stackoverflow.com/questions/1897704/angle-between-two-vectors-in-r
+
+```{r}
+#Take our formula and write it to a function
+angle <- function(x,y){
+  dot.prod <- x%*%y 
+  norm.x <- norm(x,type="2")
+  norm.y <- norm(y,type="2")
+  theta <- acos(dot.prod / (norm.x * norm.y))
+  as.numeric(theta)
+}
+```
+
+```{r}
+u1 <- as.matrix(c(0.5,0.5))
+v1 <- as.matrix(c(3,-4))
+angle(t(u1),v1)    
+```
+
+Our hand calculations match up with the answer using R 
+
+What do these vectors look like on a plot?
+
+Credit to post https://stackoverflow.com/questions/10882336/plotting-vectors-in-a-coordinate-system-with-r-or-python 
+```{r}
+#first some vectors 
+#we have u and v
+
+# This one for the coordinates of the plot
+ax<-c(-10,10)
+
+# I will need the euclidean norm (two-norm) of the vectors: 
+mag <- function(x) sqrt(sum(x^2))
+
+# I call plot to set up the "canvas"
+plot(ax,ax,main="Plot of vectors u and v")
+
+#the FIRST pair of params is the ORIGIN
+arrows(0,0, mag(u),mag(v),lwd=4,col="red")
+arrows(-2,1, mag(u),mag(v),lwd=4,col="blue")
+```
+
+
+
+
+Problem Set 2)
+
+Set up a system of equations with 3 variables and 3 constraints and solve for x. Please write a function in R that will take two variables (matrix A & constraint vector b) and solve using elimination. Your function should produce the right answer for the system of equations for any 3-variable, 3-equation system. You don’t have to worry about degenerate cases and can safely assume that the function will only be tested with a system of equations that has a solution. Please note that you do have to worry about zero pivots, though. 
+
+Please note that you should not use the built-in function solve to solve this system or use matrix inverses. The approach that you should employ is to construct an Upper Triangular Matrix and then back-substitute to get the solution. Alternatively, you can augment the matrix A with vector b and jointly apply the Gauss Jordan elimination procedure.
+
+Lets define A as our coefficient and b as our solution vector
+```{r}
+system_solver = function(A, b)
+  {
+    dimA <- dim(A)[1]
+    colA <- dim(A)[2]+dim(b)[2]
+    
+    row_operate <- matrix(c(A, b), nrow=dimA, ncol=colA)
+      for (j in 1:(colA-2)) 
+        {
+          for (i in (j+1):dimA) 
+            {
+      row_operate[i,] <- row_operate[i,]-row_operate[j,]*row_operate[i,j]/row_operate[j,j]  
+            }
+        }
+    
+  row_operate[dimA,] <- row_operate[dimA,]/row_operate[dimA,dimA]
+  
+  row_identfy <- numeric(dimA)
+  row_identfy[dimA] = row_operate[dimA,colA]
+    for (k in (dimA-1):1) 
+      {
+        t = 0
+          for (m in (k+1):dimA) 
+            {
+               s = row_operate[k,m]*row_identfy[m]
+               t = t + s
+            }
+    row_identfy[k] = (row_operate[k,colA] - t) / row_operate[k,k]
+    }
+  
+  system_solver <- round(row_identfy,2)
+return(system_solver)
+ }
+```
+
+
+We should now test our function on the following matrix A and solution vector b 
+$$
+\begin{bmatrix} 1 & 1 & 3 \\ 2 & -1 & 5 \\ -1 & -2 & 4 \end{bmatrix}\begin{bmatrix} x \\ y \\ z \end{bmatrix}=\begin{bmatrix} 1 \\ 2 \\ 6 \end{bmatrix}
+$$
+The solution set is x = [−1.55, −0.32, 0.95]. Do we get the same solution set with our function? 
+
+```{r}
+A <- matrix(c(1, 2, -1, 1, -1, -2, 3, 5, 4), nrow=3, ncol=3) 
+b <- matrix(c(1, 2, 6), nrow=3, ncol=1)
+system_solver(A,b)
+```
+
+Our function does indeed work. 
+
+
+Lets verify by using the handy rpackages for solving systems of equations. 
+```{r}
+library(matlib)
+
+#Setting matrix for linear equation
+A1 <- matrix(c(1,2,-1, 1, -1, -2,3,5,4), 3, 3)
+b1 <- c(1,2,6)
+showEqn(A1, b1)
+
+
+```
+
+Echleon Form
+```{r}
+echelon(A1, b1)
+```
+
+This does match our solution
+
+How about using direct solve?
+```{r}
+Solve(A1, b1, fractions=FALSE) 
+```
+
+This is what this system looks like 
+Note: Three variables means 3 dimensions, hence we must produce a 3D plot and look for the intersection of planes. The equations represent planes on an x,y,x graph
+```{r}
+plotEqn3d(A1,b1)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
