@@ -1,0 +1,46 @@
+---
+title: "DATA 605 Week 2 Discussion"
+author: "Vinicio Haro"
+date: "September 5, 2018"
+output: html_document
+---
+
+The problem we will be looking at is in Chapter VS, M11. 
+
+Let V be the set in C2 with the usual vector addition, but with scalar multiplication
+defined by:
+$$
+\alpha \begin{bmatrix} x \\ y \end{bmatrix}=\begin{bmatrix} \alpha y \\ \alpha x\end{bmatrix}
+$$
+
+Determine whether or not V is a vector space with these operations.
+
+Before we proceed with this proof, we need to recall the axioms of a vector space. I really like this particular posting of the axioms. They are easy to follow. http://www.math.uconn.edu/~glaz/math2210f16/Section%20Handouts/sec4_1.pdf
+
+The axioms are as follows: 
+
+A vector space is a nonempty set V of objects, called vectors, on which are defined two operations, called addition and multiplication by scalars (real numbers), subject to the ten axioms below. The axioms must hold for all u, v and w in V and for all scalars c and d.
+```{r echo=FALSE}
+print('1. u . v is in V')
+print('2. u + v = v + u')
+print('3. (u + v)+ w = u + (v + w)')
+print('4. There is a vector (called the zero vector) 0 in V such that u + 0 =  u')
+print('5. For each u in V, there is vector −u in V satisfying u + (−u) = 0')
+print('6. cu is in V')
+print('7. c(u + v) = cu + cv')
+print('8. (c + d)u = cu + du')
+print('9. (cd)u =c(du)')
+print('10. 1u = u')
+```
+
+
+At it's core, we want to show that the axioms hold true for our problem. If they hold true, then we can declare that V is indeed a vector space. On the other hand, if we can find a counter example that goes against the axioms, then we can conclude that set V is NOT a vector space. Only one of the axioms needs to fail. 
+
+Proof: 
+The way vector V is defined, we can easily find a counter example. Our set V looks a lot like axiom 10. You have some scalar multiplied against u. Lets set our scalar to 1 and choose x=1 and y=2. 
+
+$$
+\alpha \begin{bmatrix} x \\ y \end{bmatrix}=\begin{bmatrix} \alpha y \\ \alpha x \end{bmatrix}\\ \\ 1\begin{bmatrix} 1 \\ 2 \end{bmatrix}\neq \begin{bmatrix} 1\cdot 2 \\ 1\cdot 1 \end{bmatrix}=\begin{bmatrix} 2 \\ 1 \end{bmatrix}\\ \\ \begin{bmatrix} 1 \\ 2 \end{bmatrix}\neq \begin{bmatrix} 2 \\ 1 \end{bmatrix}
+$$
+
+By contradiction, we have shown that set V contradicts axiom 10, therefore it is NOT a vector space. 
