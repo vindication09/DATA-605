@@ -1,0 +1,123 @@
+---
+title: "DATA 605 Week 3 Discussion"
+author: "Vinicio Haro"
+date: "September 10, 2018"
+output: html_document
+---
+
+For this discussion, we will be going over problem Exercise EE.C20 in Section E. 
+
+Find the eigenvalues, eigenspaces, algebraic multiplicities and geometric multiplicities for the matrix below. It is possible to do all these computations by hand, and it would be instructive to do so.
+
+$$
+\begin{bmatrix} -1 & 2 \\ -6 & 6 \end{bmatrix}
+$$
+I really like this breakdown of eigenvalues and vectors. It into detail regarding the actual applications of these concepts in addition to the thory
+http://math.mit.edu/~gs/linearalgebra/ila0601.pdf
+
+Before we solve this problem, we must examine what we are being asked. Lets break it up into small steps. We are first tasked with finding what is an eigenvalue. 
+
+An eigen value is a scalar coming from a set associated with a linear system of equations. They are found by computing the root of the characteristic polynomial. You can think of the eigen value as a way to measure the shrink or stretch on some vector x. Think back to pre-calculus where the concept of shrinking or stretching on a function is introduced. 
+
+The eigen vector is a vector that only changes according to some scalar when a specific linear transform is applied to it. The eigen vector is also sometimes known as the characteristic vector. 
+
+This is a pretty good blurb on what an eigenspace is http://mathworld.wolfram.com/Eigenspace.html but long story short, the zero vector union with the set of all eigen vectors is a subspace or R known otherwise as a eigenspace of the eigen value (lambda).
+
+With all these concepts in mind, lets solve our problem. 
+
+We need the following formulas in order to proceed:
+$$
+Ax=\lambda x\\det(A-Ix)=0
+$$
+
+The first step is to find our charateristic polynomial and solve for the roots by subtracting some unknown from the diagonal terms of A. 
+
+$$
+\begin{bmatrix} -1-x & 2 \\ -6 & 6-x \end{bmatrix}
+$$
+
+We then proceed to compute the determinant https://math.dartmouth.edu/archive/m8s00/public_html/handouts/matrices3/node7.html
+
+$$
+\begin{bmatrix} -1-x & 2 \\ -6 & 6-x \end{bmatrix}=(-1-x)(6-x)-(2)(-6)
+$$
+
+
+
+Use Algebra to simplify. Don't forget to watch the signs when doing the distribution. 
+It is always a good idea to arrange your polynomial in order of degree once you have carried out all distributions. Its more of a common convention in algebra. 
+$$
+(-1-x)(6-x)-(2)(-6)\\-6+x-6x+x^{2}+12\\x^{2}-5x+6
+$$
+
+Solve for the roots by setting the equation equal to zero. Here is a good sourcefor aquick reviewon factoring 
+http://tutorial.math.lamar.edu/Classes/Alg/Factoring.aspx
+$$
+x^{2}-5x+6\\(x-3)(x-2)\\x=2, x=3
+$$
+
+We found the roots to be 2 and 3. The roots of our polynomial are the eigenvalues of this system. 
+$$
+\lambda=2\\\lambda=3
+$$
+
+The multiplicity of our eigen values is 1 for each. 
+
+
+
+Lets compute our eigenvectors when lambda=2
+$$
+Ax=2x
+$$
+
+
+$$
+\begin{bmatrix} -1-2 & 2 \\ -6 & 6-2 \end{bmatrix}\\\begin{bmatrix} -3 & 2 \\ -6 & 4 \end{bmatrix}=\begin{bmatrix} 2 \\ 2 \end{bmatrix}\\\begin{bmatrix} -3x + 2y \\ -6x + 4y \end{bmatrix}=\begin{bmatrix} 2x \\ 2y \end{bmatrix}
+$$
+
+If we solve this system for x and y , we end up getting ratios for each vector element however, we can do this in r since our vectors will contain fractions. 
+
+
+Verify Eigen Values and vectors
+```{r}
+A <- matrix(c(-1,2,-6,6), 2, 2, byrow=TRUE)
+e <- eigen(A)
+e
+```
+
+We conclude that each eigenspace does indeed contain a single basis vector. We also know the multiplicity for each eigen value is 1. Hence we have found the eigen values, eigen vectors, and eigenspaces. 
+
+This is a good tutorial if you want to do it by hand 
+https://rpubs.com/aaronsc32/eigenvalues-eigenvectors-r
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
