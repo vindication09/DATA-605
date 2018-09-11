@@ -27,7 +27,7 @@ With all these concepts in mind, lets solve our problem.
 
 We need the following formulas in order to proceed:
 $$
-Ax=\lambda x\\det(A-Ix)=0
+Ax=\lambda x\\det(A-I\lambda)=0
 $$
 
 The first step is to find our charateristic polynomial and solve for the roots by subtracting some unknown from the diagonal terms of A. 
@@ -61,29 +61,83 @@ $$
 \lambda=2\\\lambda=3
 $$
 
-The multiplicity of our eigen values is 1 for each. 
 
 
-
-Lets compute our eigenvectors when lambda=2
+The first case is to find vectors x which satisft the expression when lambda is 2
 $$
-Ax=2x
+(A-\lambda I)x=0\\(A-2 \lambda)\\\begin{bmatrix} -1-2 & 2 \\ -6 & 6-2 \end{bmatrix}\ \\\begin{bmatrix} -3 & 2 \\ -6 & 4 \end{bmatrix}
 $$
 
-
+We now have a singular matrix, hence why lambda is an eigen value. We need to solve Ax=0 as follows:
 $$
-\begin{bmatrix} -1-2 & 2 \\ -6 & 6-2 \end{bmatrix}\\\begin{bmatrix} -3 & 2 \\ -6 & 4 \end{bmatrix}=\begin{bmatrix} 2 \\ 2 \end{bmatrix}\\\begin{bmatrix} -3x + 2y \\ -6x + 4y \end{bmatrix}=\begin{bmatrix} 2x \\ 2y \end{bmatrix}
+\begin{bmatrix} -3 & 2 \\ -6 & 4 \end{bmatrix}\begin{bmatrix} x \\ y \end{bmatrix}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}
+$$
+We need to perform row operations in order to reduce this system using Gauss-Jordan Elimination (note that column one is for x and column 2 is for y)
+$$
+\begin{bmatrix} -3 & 2 & 0 \\ -6 & 4 & 0 \end{bmatrix}
 $$
 
-If we solve this system for x and y , we end up getting ratios for each vector element however, we can do this in r since our vectors will contain fractions. 
+Divide row 1 by -3 to get 
+$$
+\begin{bmatrix} 1 & -2/3 & 0 \\ -6 & 4 & 0 \end{bmatrix}
+$$
 
+Add -6 times the 1st row to the second row to get
+$$
+\begin{bmatrix} 1 & -2/3 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+$$
+
+We are then able to pull the following equations 
+$$
+x-\frac { 2 }{ 3 } y=0
+$$
+
+Which can be re-written as 
+$$
+x=\frac { 2 }{ 3 } y
+$$
+Here we need to do some trial and error by picking values to make the above equation true. If we let x=1, then y=3/2 therefore the eigen vector is [1, 3/2] or we can re-write as [2,3]
+
+We need to repeat the same process for lambda=3
+$$
+(A-\lambda I)x=0\\(A-3 \lambda)\\\begin{bmatrix} -1-3 & 2 \\ -6 & 6-3 \end{bmatrix}\ \\\begin{bmatrix} -4 & 2 \\ -6 & 3 \end{bmatrix}
+$$
+
+Re-Write the system as follows:
+$$
+\begin{bmatrix} -4 & 2 \\ -6 & 3 \end{bmatrix}\begin{bmatrix} x \\ y \end{bmatrix}=\begin{bmatrix} 0 \\ 0 \end{bmatrix}\\
+\begin{bmatrix} -4 & 2 & 0 \\ -6 & 3 & 0 \end{bmatrix}
+$$
+
+We perform row reduction in order to end up with the following system
+$$
+\begin{bmatrix} 1 & -1/2 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+$$
+
+Which yields the equation
+$$
+x-\frac { 1 }{ 2 } y=0
+$$
+re-write as 
+$$
+x=\frac { 1 }{ 2 } y
+$$
+
+We pick values for x and y, lets let x=1, therfore y is 2, thus our eigen vector for lambda=2 is [1,2]
 
 Verify Eigen Values and vectors
 ```{r}
 A <- matrix(c(-1,2,-6,6), 2, 2, byrow=TRUE)
-e <- eigen(A)
-e
+A
 ```
+
+Compute the eigen values
+```{r}
+e <- eigen(A)
+values<-e$values
+values
+```
+
 
 We conclude that each eigenspace does indeed contain a single basis vector. We also know the multiplicity for each eigen value is 1. Hence we have found the eigen values, eigen vectors, and eigenspaces. 
 
