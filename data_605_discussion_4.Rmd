@@ -1,0 +1,60 @@
+---
+title: "DATA 605 Discussion Week 4"
+author: "Vinicio Haro"
+date: "September 18, 2018"
+output: html_document
+---
+
+Exercise LT.C43 
+
+Define the following:
+$$
+T:p_3 \rightarrow p_2\\by\\
+T(ax+bx+cx^{2}+dx^{3})=b+2cx+3dx^{2}
+$$
+
+Find the pre-image of 0. Does this linear transformation seem familiar?
+
+Lets understand what the pre-image is 
+http://mathworld.wolfram.com/Pre-Image.html
+
+A Pre-image exists if whether f has an inverse or not. If f does not have an inverse, then the preimage is defined as the exact image of y. 
+
+Let the following be the preimage of T
+$$
+T^{-1}(0)
+$$
+
+The preimage of T is the set of all polynomials where the following holds true
+$$
+T(ax+bx+cx^{2}+dx^{3})=0
+$$
+
+This implies that the following is also true 
+$$
+b+2cx+3dx^{2}=0
+$$
+Therefore it can be said that zero represents the 0 polynomial, in otherwords the set of all polynomials where a=0,b=0,and c=0 thus polynomials of degree 0. 
+
+How does this transformation look familiar? 
+$$
+T(ax+bx+cx^{2}+dx^{3})=b+2cx+3dx^{2}
+$$
+Is the same as 
+$$
+dx/dy(ax+bx+cx^{2}+dx^{3})=b+2cx+3dx^{2}
+$$
+
+In other words, the expression on the right is the derivative of the polynomial on the left assuming a, b, and c are non zero constants. The derivative of a constant is zero. The derivative of the other terms can be found using the power rule. 
+$$
+dx/dy(ax^{n})=nax^{n-1}
+$$
+
+
+
+
+
+
+
+
+
