@@ -1,0 +1,171 @@
+---
+title: "DATA 605 HW 4"
+author: "Vinicio Haro"
+date: "9/22/2018"
+output: html_document
+---
+
+
+Problem Set 1) 
+
+In this problem, we will verify using R that SVD and Eigenvalues are related as worked out in the weekly module. Given a 3 x 3 matrix A 
+$$
+A=\begin{bmatrix} 1 & 2 & 3 \\ -1 & 0 & 4 \end{bmatrix}
+$$
+Write code in r to compute 
+$$
+X=AA^{T}\\
+Y=A^{T}A
+$$
+
+Then compute the eigenvalues and eigenvectors of X and Y using build in commands in R
+
+Then, compute the left-singular, singular values, and right-singular vectors of A using the svd command. Examine the two sets of singular vectors and show that they are indeed eigenvectors of X and Y. In addition, the two non-zero eigenvalues (the 3rd value will be very close to zero, if not zero) of both X and Y are the same and are squares of the non-zero singular values of A. Your code should compute all these vectors and scalars and store them in variables.Please add enough comments in your code to show me how to interpret your steps.
+
+
+Define matrix A
+```{r}
+A = matrix(c(1,2,3,-1,0,4), nrow=2, byrow = TRUE)
+A
+```
+
+Lets compute X
+```{r}
+#we essentially need to multiply A by it's transpose so we tell our function here to perform matrix multiplication
+X<-function(a)
+  {
+  n=nrow(a)
+  matrixX<-matrix(0,nrow=n,ncol=n)
+  for (i in 1:n)
+    for (j in 1:n)
+      matrixX[i,j]=sum(a[i,]*a[j,])
+  return(matrixX)
+  }
+
+X_compute<-X(A)
+X_compute
+```
+
+We now proceed to compute Y using our previous function 
+```{r}
+transposeA<-t(A)
+Y_compute<-X(transposeA)
+Y_compute
+```
+
+We use the built in commands in R to find the eigen values and the eigen vectors 
+For X
+```{r}
+eigen(X_compute)
+```
+
+For Y
+```{r}
+eigen(Y_compute)
+```
+
+By looking at the eigen values associated with Y, one can argue that Y is almost a singular matrix. We move on to the next part of the question.
+
+Compute the SVD
+```{r}
+svd(A)
+```
+
+$d is the vector that contains singular values of X. $u is a matrix where columns contain left singular vectors and $v is a matrix that contain right singular vectors. As you can see, the $u is close to the eigen vectors of X while $v is close to the eigen vectors of Y.
+
+https://www.rdocumentation.org/packages/base/versions/3.5.1/topics/svd
+
+We should now show that the eigen values of X and Y are indeed the same and are squares of SVD.
+We can do this using the all.equal command. all.equal will simply return a boolean which is enough for our purpose.
+
+Lets store the singular values using SVD, eigen values of X and eigen values of Y so we can call on them 
+```{r}
+singular<-svd(A)$d
+
+eigen_X <- eigen(X_compute)
+eigenvalues_X<-eigen_X$values
+
+eigen_Y <- eigen(Y_compute)
+eigenvalues_Y<-eigen_Y$values
+```
+
+Return True if indeed the eigenvalue matches the square of SVD
+For X
+```{r}
+all.equal(eigenvalues_X,(singular^2))
+```
+
+For Y
+```{r}
+all.equal(eigenvalues_Y[1:2],(singular^2))
+```
+
+We can conclude that computed non-zero eigenvalues of X and Y are the same as the non-zero SVD values of matrix A. 
+
+
+Problem Set 2) 
+
+Using the procedure outlined in section 1 of the weekly handout, write a function to compute the inverse of a well-conditioned full-rank square matrix using co-factors. In order to compute the co-factors, you may use built-in commands to compute the determinant. Your function should have the following signature:
+
+B = myinverse(A)
+
+where A is a matrix and B is its inverse and A×B = I. The off-diagonal elements of I should be close to zero, if not zero. Likewise, the diagonal elements should be close to 1, if not 1. Small numerical precision errors are acceptable but the function myinverse should be correct and must use co-factors and determinant of A to compute the inverse.
+
+```{r}
+myinverse<-function(A)
+  
+  {
+  
+  rowA<-nrow(A) #find rows of A
+  
+  A2<-A
+  
+  shellA<-matrix(NA, nrow=rowA,ncol=rowA) #create a shell matrix to be filled in after iteration
+  
+  for (i in 1:rowA) #loop through columns
+  {
+    for (j in 1:rowA) #loop through rows 
+    {
+      sub_A<-A2[-i,-j] #Compute the determinant using built in functions and store in shell matrix 
+      shellA[i,j]<-det(sub_A)
+    }
+  }
+  
+  #compute the determinant of A
+  detA<-det(A2)
+  
+  #compute the inverse of A using ratio of transpose over det. Ensure denominator is non zero 
+  if (detA !=0)
+      {
+        invA<-t(shellA)/detA
+      }
+  return(invA)
+  
+  
+  }
+```
+
+
+Lets test with 
+$$
+\begin{bmatrix} 1 & 1 & 3 \\ 2 & -1 & 5 \\ -1 & -2 & 4 \end{bmatrix}
+$$
+
+```{r}
+#Testing Function 
+testMatrix <- matrix(c(1,1,3,2,-1,5,-1,-2,4), nrow=3, ncol=3, byrow = TRUE)
+inv_testMatrix <- myinverse(testMatrix)
+inv_testMatrix
+```
+
+We can use R to verify 
+```{r}
+solve(testMatrix)
+```
+
+It seems like our function is doing what it is supposed to . 
+
+
+
+
+
