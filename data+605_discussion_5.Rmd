@@ -1,0 +1,100 @@
+---
+title: "DATA 605 Discussion 5"
+author: "Vinicio Haro"
+date: "September 24, 2018"
+output: html_document
+---
+
+Problem 6 in Chapter 2 
+
+Assume that a new light bulb will burn out after t hours, where t is chosen from [0,∞) with an exponential density
+$$
+f(t)=\lambda { e }^{ -\lambda t }
+$$
+
+In this context, λ is often called the failure rate of the bulb.
+
+(a) Assume that λ = 0.01, and find the probability that the bulb will not burn out before T hours. This probability is often called the reliability of the bulb.
+
+If X is a random variable, then we essentially want to find the probability of X less than or equal to T, where T is the time of failure. Hence we have the following:
+
+The probability that the bulb will burn our before T hours is 
+$$
+P(x\le T)
+$$
+
+The probability that the bulb will not burn out after T hours is simply the compliment 
+$$
+1-P(x\le T)
+$$
+
+Since we are dealing with a continous exponential function of time, we should consider using an integral with integration limits 0 to T and integrand f(t)
+
+$$
+1-\int _{ 0 }^{ T }{ \lambda { e }^{ -\lambda t } } dt
+$$
+We are givea value of lambda= 0.01
+$$
+1-\int _{ 0 }^{ T }{ 0.01 { e }^{ -0.01 t } } dt\\
+1-0.01\int _{ 0 }^{ T }{  { e }^{ -0.01 t } } dt
+
+$$
+
+The technique at hand is u-substitution (reverse chain rule)
+https://www.khanacademy.org/math/ap-calculus-ab/ab-integration-new/ab-6-9/a/review-applying-u-substitution
+
+$$
+u=-0.01t\\
+du=-0.01dt\\
+ \frac { -du }{0.01  } =dt
+$$
+$$
+1-0.01\int _{ 0 }^{ T }{  { e }^{ u } } \frac { -du }{0.01  }\\
+1+\int _{ 0 }^{ T }{  { e }^{ u } } du\\
+$$
+Transform upper and lower limits using our u-sub 
+$$
+Upper: u=-0.01t=-0.01T\\
+lower: u=-0.01t=-0.01(0)=0
+$$
+
+Replace newlimits and evaluate in terms of u 
+$$
+1+\int _{ 0 }^{-0.01 T }{  { e }^{ u } } du\\
+$$
+Apply fundemental theorem of calculus for definite integrals (part 2 of theorem)
+http://mathworld.wolfram.com/FundamentalTheoremsofCalculus.html
+$$
+1+(e^{-0.01T}-e^{0})=\\
+1+e^{-0.01T}-1=\\
+=e^{-0.01T}
+$$
+
+Hence we arrive at our answer. We found the probability that the bulb will NOT burn out after t hours. 
+
+(b) For what T is the reliability of the bulb = 1/2?
+We need to perform some algebra and solve for T using our derived probability. We need to solve for T
+
+We need to solve exponential equations 
+http://www.sosmath.com/algebra/logs/log4/log46/log46.html
+$$
+\frac { 1 }{2 }=e^{-0.01T}
+$$
+
+$$
+ln(1/2)=ln(e^{-0.01T})\\
+ln(1/2)=-0.01T\\
+\frac { ln(1/2) }{-0.01 }=T
+$$
+
+Using quotient to subtraction property of ln
+$$
+\frac { ln(1)-ln(2) }{-0.01 }=T\\
+\frac { 0-ln(2) }{-0.01 }=T\\
+\frac { -ln(2) }{-0.01 }=T\\
+\frac { ln(2) }{0.01 }=T
+$$
+
+If you punch these values in a calculator, then T is roughly 70, hence 70 hours. 
+
+
