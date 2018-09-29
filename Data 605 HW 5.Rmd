@@ -1,0 +1,154 @@
+---
+title: "DATA 605 HW 5"
+author: "Vinicio Haro"
+date: "September 24, 2018"
+output: html_document
+---
+
+Choose independently two numbers B and C at random from the interval [0, 1] with uniform density. Prove that B and C are proper probability distributions. Note that the point (B,C) is then chosen at random in the unit square.
+
+Find the probability that:
+(a) B + C < 1/2
+
+We know that B and C are bounded by the closed interval [0,1]. We also know that B and C are independent, hence the following is true:
+
+Lets let B=x and C=y
+$$
+f(B,C)=f(x,y)=f(x)f(y)
+$$
+
+We define our probability as follows: 
+$$
+P(B+C<1/2)=p(x+y<1/2)\\
+$$
+We can define x in terms of y as 
+$$
+y<1/2-x
+$$
+
+We define our double integral as follows:
+$$
+=\int _{ 0 }^{ 1/2 } \int _{ 0 }^{ 1/2 -x }f(x,y)dxdy
+$$
+The inner integral correpsonds to the y variable and the outer intgereal correpsonds to the x variable.When performing double intgration, you want to work from inside to outside. 
+http://tutorial.math.lamar.edu/Classes/CalcIII/DoubleIntegrals.aspx
+
+f(x,y)=1
+
+$$
+=\int _{ 0 }^{ 1/2 } \int _{ 0 }^{ 1/2 -x }1dxdy
+$$
+
+Evaluate the innerintegral first and integrate with respect to y and apply fundamental theorem of calculus part 1.Proceed to evaluate the outer integral. 
+
+$$
+=\int _{ 0 }^{ 1/2 } ((\frac{1}{2}-x)-0)dx\\
+=\int _{ 0 }^{ 1/2 } (\frac{1}{2}-x)dx\\
+=((\frac{1}{2} )(\frac{1}{2})-\frac{(\frac{1}{2})^{2}}{2})-(0-0)\\
+=\frac{1}{4}-\frac{1}{8}\\
+=\frac{1}{8}\\
+p(B+C<1/2)=\frac{1}{8}
+$$
+
+(b) BC < 1/2
+
+If we were to let B=1, then C would be <1/2 vice versa . We can use integration to solve this problem, however we do not need to use double integration. 
+
+$$
+BC<\frac{1}{2}
+$$
+
+Lets set up our problem 
+$$
+xy<\frac{1}{2}
+$$
+
+IF we follow a similar process as part a, then we can re-write y as follows:
+$$
+y<\frac{1}{2x}
+$$
+
+We set up our integrals as follows:
+$$
+=\frac{1}{2}+\int _{ 1/2 }^{ 1 } \int _{ 0 }^{ 1/2x }f(x,y)dydx
+$$
+We pretty much divide our region into two parts taking the area of x from 0 to y=1/2x using geometry and 1/2 to 1. The points of intersection would be (1/2,1) and (1,1/2)
+
+$$
+=\frac{1}{2}+\int _{ 1/2 }^{ 1}(\frac{1}{2x})dx
+$$
+
+$$
+=\frac{1}{2}+\frac{1}{2}[ln(1)-ln(\frac{1}{2})]
+$$
+$$
+=\frac{1}{2}+\frac{1}{2}[0-ln(\frac{1}{2})]\\
+=\frac{1}{2}+\frac{1}{2}[ln(\frac{1}{2})]
+$$
+If you punch this into a calculator, the probability is roughly .8
+
+Hence, we have found the probability of BC<1/2
+
+
+(C) |B - C| < 1/2
+
+$$
+|B-C|<1/2
+$$
+
+Using the definition of absolute value, we consider C to be the lines C=B+1/2 and C=B-1/2. The intersections of this region with the unit square forms two right triangles. We can simply use the formula for the area of a right trangle. We then subtract that doubled right triangle area from 1. 
+
+The base has a unit length of 1/2 and the length is 1 unit
+
+$$
+1-2A(triangle)\\
+1-2\frac{1}{2}bh\\
+1-2(\frac{1}{2}(\frac{1}{2})(\frac{1}{2}))\\
+=\frac{3}{4}
+$$
+
+This is what is happening geometrically 
+$$
+|x-y|<1/2\\
+y=x+1/2\\
+y=x-1/2
+$$
+
+If you plot these two lines on a graph, you would see that they intersect the unit square at the points (0,1/2),(1/2,0), and (1,1/2). The area of interest excludes two right triangles close to the edges each with length 1/2 and base 1/2. This is why it is easier to simply subtract the areas of those right triangles from 1 in order to find the area in question. 
+
+d) max{B,C} < 1/2.
+We need to compute the maximum numbers of B and C that satisfy the equations at hand. 
+$$
+Z=max(B,C)<1/2
+$$
+
+We can re-write as 
+$$
+P(B\le\frac{1}{2},C\le\frac{1}{2})
+$$
+Just by inference, if the max of the product BC are less than a half, then we can assume that B and C are both going to be less than or equal to a half. 
+
+$$
+1-P(B\le\frac{1}{2})P(C\le\frac{1}{2})=(\frac{1}{2})(\frac{1}{2})=\frac{1}{4}
+$$
+
+Of course we can also use techniques of calculus to solve this problem. 
+
+
+(e) min{B,C} < 1/2.
+
+$$
+Z=min(B,C)<1/2
+$$
+Since in part D, we computed the max of BC<1/2, then the min of BC being less than 1/2 should simply be the compliment but lets see if our work matches that hypothesis
+
+$$
+P(B\ge\frac{1}{2},C\ge\frac{1}{2})\\
+=1-[1-P(B\le\frac{1}{2})][1-P(C\le\frac{1}{2})]\\
+=1-[1-\frac{1}{2}][1-\frac{1}{2}]\\
+=1-[\frac{1}{2}][\frac{1}{2}]\\
+=1-\frac{1}{4}\\
+=\frac{3}{4}
+$$
+
+
