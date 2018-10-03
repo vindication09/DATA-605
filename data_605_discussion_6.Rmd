@@ -1,0 +1,126 @@
+---
+title: "DATA 605 Discussion 6"
+author: "Vinicio Haro"
+date: "October 3, 2018"
+output: html_document
+---
+
+Chapter 4, problem 3 
+
+The Acme Super light bulb is known to have a useful life described by the density function
+$$
+f(t)=.01e^{-0.1t}
+$$
+
+Where t is measured in hours. 
+
+(a) Find the failure rate of this bulb (see Exercise 2.2.6)
+
+The failure rate can be found with the following equation:
+
+The ratio of realiability prime over realiability 
+https://en.wikipedia.org/wiki/Failure_rate
+
+$$
+-\frac{R'(t)}{R(t)}
+$$
+F(t) represents the realiability function. We can derive the reliability function from the given density function. We derive the reliability as follows: 
+
+$$
+R(t)=1-\int _{ 0 }^{ t }{ f(t)dt } 
+$$
+
+http://www.engineeredsoftware.com/nasa/reliabil.htm
+
+
+Lets first solve compute the integration by hand before finding R(t)
+
+$$
+\int _{ 0 }^{ t }{ .01e^{-0.1t}dt }
+$$
+
+Consider the technique here https://www.math.ucdavis.edu/~kouba/CalcTwoDIRECTORY/expondirectory/Exponentials.html to compute integral of exponents 
+
+We perform u-substitution after pulling out the 0.01 
+$$
+0.01\int _{ 0 }^{ t }{ e^{-0.1t}dt }\\
+u=-0.01t\\
+du=-0.01dt\\
+-\frac{du}{0.01}=dt
+$$
+Convert upper and lower limits of integration using our u to x map 
+$$
+upper=-0.01t\\
+lower=0
+$$
+
+Do not be alarmed that the upper limit is negative. We mapped a value in the domain of t to a new value in the domain of u. Integrate as is in order to avoid confusion.
+
+Replace our new dt in for u 
+$$
+-\frac{0.01}{0.01}\int _{ 0 }^{ -0.01t }{ e^{u}du }\\
+-(e^{-0.01t}-1)\\
+1+e^{-0.01t}
+
+$$
+We apply fundamental theorem of calculus part 2 and consolidate the negative on the outside of the integral. 
+
+
+Now we compute R(t),simplify by using PEMDAS
+$$
+R(t)=1-(1+e^{-0.01t})\\
+R(t)=e^{-0.01t}
+$$
+
+Finding the failure involves computing derivative of R(t)
+Consider the method here http://tutorial.math.lamar.edu/Classes/CalcI/DiffExpLogFcns.aspx
+
+We can now compute the failure rate. The exponentials cancel out.
+
+$$
+-\frac{R'(t)}{R(t)}=-\frac{-0.01e^{-0.01t}}{e^{0.01t}}=0.01
+$$
+
+
+(b) Find the reliability of this bulb after 20 hours
+We simply use our derived realiability formula and plug in 20 for t
+
+$$
+R(t)=e^{-0.01t}=e^{-0.01(20)}
+$$
+If you punch this in a calculator, it should come out to roughly .8
+
+
+
+(c) Given that it lasts 20 hours, find the probability that the bulb lasts another 20 hours.
+
+We want to find R(40) because we need to compute the probability that the bulb will last an additional 20 hours given that the bulb lasts first 20 hours. You can think of it as R(20+20). We divide this quantitiy by R(20) since it is our benchmark. 
+
+https://en.wikipedia.org/wiki/Conditional_probability
+
+$$
+P=\frac{R(40)}{R(20)}=\frac{e^{-0.01(40)}}{e^{-0.01(20)}}
+$$
+
+This should also come out to roughly .8
+
+(d) Find the probability that the bulb burns out in the forty-first hour, given that it lasts 40 hours.
+
+In order to compute this probability we need to consider the numerator as the difference between the failure functions F(41)-F(40). The denominator will be the realiability evaluated at 40. Our probability is as follows 
+
+We are only interested in what happens when t=41. Since F(t) is the result of the integral we computed area. It is the area under the curve from 0 to T. We are simply subtracting the area under the curve associated with values [0,40] leaving only the line at F(41)
+
+$$
+P=\frac{F(41)-F(40)}{R(40)}\\
+=\frac{(e^{-0.01t}-1)-(e^{-0.01t}-1)}{e^{-0.01(40)}}=0.01
+$$
+
+
+
+
+
+
+
+
+
+
