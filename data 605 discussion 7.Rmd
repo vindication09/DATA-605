@@ -1,0 +1,104 @@
+---
+title: "DATA 607 Week 7 Discussion"
+author: "Vinicio Haro"
+date: "October 9, 2018"
+output: html_document
+---
+
+Let X be a random variable which is Poisson distributed with parameter λ. Show that E(X) = λ
+
+We are given the following hint: 
+
+$$
+e^{x}=1+x+\frac{x^{2}}{2!}+\frac{x^{3}}{3!}+....
+$$
+
+Our hint is the first few terms of the series for exponential function 
+https://en.wikipedia.org/wiki/Exponential_function
+
+We now that the expectation of a random variable is found by 
+
+$$
+E(x)=\sum { xf(x) } 
+$$
+
+
+We are told our random variable is poisson distributed with parameter lambda 
+
+$$
+f(x)=\frac { { e }^{ -\lambda  }{ \lambda  }^{ x } }{ x! } 
+$$
+Plug in the expression for f(x) into the formula for expected value 
+
+$$
+E(x)=\sum { x\frac { { e }^{ -\lambda  }{ \lambda  }^{ x } }{ x! } } 
+$$
+
+What happens if we expand a few terms of this series with index x starting at 0?
+
+$$
+E(x)=0\frac { { e }^{ -\lambda  }{ \lambda  }^{ 0 } }{ 0! }+1\frac { { e }^{ -\lambda  }{ \lambda  }^{ 1 } }{ 1! }+2\frac { { e }^{ -\lambda  }{ \lambda  }^{ 2 } }{ 2! }+3\frac { { e }^{ -\lambda  }{ \lambda  }^{ 3 } }{ 3! }...
+$$
+
+Notice that every term has something in common. We can remove the eponential term and the lambda term.
+Note: the first term in our series is zero
+
+Factor out a lambda and the exponent from each term 
+
+
+$$
+E(x)=e ^{ -\lambda  }\lambda(1+\lambda+\frac{\lambda^{2}}{2!}+\frac{\lambda^{3}}{3!}+...)
+$$
+
+Recall our hint
+
+$$
+e^{\lambda}=1+\lambda+\frac{\lambda^{2}}{2!}+\frac{\lambda^{3}}{3!}+...
+$$
+
+The terms in the () are nothing other than the infinite series for the expinential function using lambda instead of x. We can substitue accordingly 
+
+$$
+E(x)=e ^{ -\lambda  }\lambda(e^{\lambda})\\
+=e^{-\lambda+\lambda}\lambda\\
+=\lambda
+$$
+
+Hence proved
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
