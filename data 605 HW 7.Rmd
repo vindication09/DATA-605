@@ -1,0 +1,179 @@
+---
+title: "DATA 605 Week 7"
+author: "Vinicio Haro"
+date: "10/12/2018"
+output: html_document
+---
+
+1. Let X1, X2, . . . , Xn be n mutually independent random variables, each of which is uniformly distributed on the integers from 1 to k. Let Y denote the minimum of the Xi’s. Find the distribution of Y .
+
+By the definition of the CFD, we can derive the following
+$$
+F(y)=P(Y\le y)=1-P(Y< y)\\
+=1-P(min(x_1,x_2,...x_n)>y)
+$$
+
+
+We know that the minimum of the xi's are greater than y when xi is greater than y for all values of i. These are i.i.d variables, we can write out the following:
+
+$$
+P(y)=1-P(x_1>y)P(x_2>y)...P(x_n>y)
+$$
+
+We consider that xi are uniformally distributed on the interval (1,k)
+
+$$
+p(x_i>y)=1-\frac{y-1}{k-1}
+$$
+
+We can now develop the distribution of y 
+
+$$
+F(y)=1-(1-\frac{y-1}{k-1})^{n}
+$$
+
+
+Your organization owns a copier (future lawyers, etc.) or MRI (future doctors). This machine has a manufacturer’s expected lifetime of 10 years. This means that we expect one failure every ten years. (Include the probability statements and R Code for each part.).
+
+a. What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as a geometric. (Hint: the probability is equivalent to not failing during the first 8 years..)
+
+$$
+P(X=k)=(1-p)^{k-1}p\\
+E[X]=\frac{1}{p}\\
+Var[X]=\frac{1-p}{p^{2}}\\
+$$
+Probability of machine failure each year 
+```{r}
+p_fail=1/10
+p_fail
+```
+
+Probability of machine not failing every year
+```{r}
+p_doesnot_fail<-1-p_fail
+p_doesnot_fail
+```
+
+Expected value 
+```{r}
+e<-1/p_fail
+e
+```
+
+Standard Deviation
+```{r}
+std <- sqrt(p_doesnot_fail/(p_fail^2))
+std
+```
+
+We need to consider using the geometric to find the probability the machine will fail after 8 years. We can use some standard r functions 
+```{r}
+p=((1-p_fail)^(8-1))*p_fail
+p
+```
+
+
+b. What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as an exponential.
+
+
+$$
+X\le k: P(X\le k)= e^{-\lambda x}\\
+E[X]=\frac{1}{\lambda}\\
+Var[x]=\frac{1}{\lambda^{2}}
+$$
+Probability of failing
+```{r}
+p_exp<-exp(-1*(8/10))
+p_exp
+```
+
+probability of not failing 
+```{r}
+p_exp_not<-1-p_exp
+p_exp_not
+```
+
+Expected Value (we can use to compute lambda)
+```{r}
+u=10
+u
+```
+
+$$
+10=\frac{1}{\lambda}\\
+\lambda=.10
+$$
+
+standard deviation
+```{r}
+std_exp<-sqrt(1/(.10^2))
+std_exp
+```
+
+c. What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as a binomial. (Hint: 0 success in 8 years)
+
+$$
+P(success)=(nCk)P^{n}(1-p)^{n-k}\\
+E[X]=np\\
+Var[X]=np(1-p)
+$$
+
+probability of machine failure
+```{r}
+p_binomial<-choose(8, 0)*((.1)^(0))*(1-.1)^8
+p_binomial
+```
+
+probability of non failure
+```{r}
+p_binomial_not<-1-p_binomial
+p_binomial_not
+```
+
+Expected Value 
+```{r}
+e_bin<-8*.1
+e_bin
+```
+
+standard deviation
+```{r}
+std_bin <- sqrt(8*.1*(1 - .1))
+std_bin
+
+```
+
+
+d. What is the probability that the machine will fail after 8 years?. Provide also the expected value and standard deviation. Model as a Poisson.
+
+$$
+P(X=x)=\frac{\lambda^{x}e^{-\lambda}}{x!}\\
+E[X]=\lambda\\
+Var[X]=\lambda
+$$
+
+probability of machine failure 
+```{r}
+p_poi<-(exp(-1 * 10) * 10^8) / factorial(8)
+p_poi
+```
+
+The expected value is 10
+
+Standard deviation 
+```{r}
+e_poi<-sqrt(10)
+e_poi
+```
+
+
+
+
+
+
+
+
+
+
+
+
