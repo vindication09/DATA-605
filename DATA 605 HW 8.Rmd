@@ -1,0 +1,149 @@
+---
+title: "DATA 605 Week 8"
+author: "Vinicio Haro"
+date: "October 19, 2018"
+output: html_document
+---
+
+#11 and #14 on page 303 of probability text
+#1 on page 320-321
+
+11)
+A company buys 100 lightbulbs, each of which has an exponential lifetime of 1000 hours. What is the expected time for the first of these bulbs to burn out? (See Exercise 10.)
+
+$$
+u=1000\\
+n=100\\
+E[x]=\frac{u}{n}=\frac{1000}{100}=10
+$$
+
+14) Assume that X1 and X2 are independent random variables, each having an exponential density with parameter λ. Show that Z = X1 − X2 has density
+
+$$
+f_z(Z)=(1/2)\lambda e^{-\lambda |z|}
+$$
+
+Lets compute the PDF for our x1 and x2 
+
+x1:
+
+$$
+f(x_1)=(1/2)\lambda e^{-\lambda x_1}\\
+f(x_2)=(1/2)\lambda e^{-\lambda x_2}
+$$
+Please note that we can assume x1 and x2 to be greater than or equal to zero
+
+http://mathworld.wolfram.com/Convolution.html
+
+Since x1 and x2 are independent, we can compute the joint density function as follows:
+
+$$
+f(x_1, x_2)=f(x_1)f(x_2)\\
+=(\lambda e^{-\lambda x_1})(\lambda e^{-\lambda x_2})\\
+=\lambda^{2}e^{x_1+x_2}
+$$
+
+We know z=x1+x2 but lets pick some variable h to be x2 such that we have z=x1+h. We can re-work our new equation into x1=z+h. The purpose of this is to use the Jacobian for the transformation of variables. 
+
+https://onlinecourses.science.psu.edu/stat414/node/160/
+
+We compute the jacobian as follows: 
+
+$$
+J=\frac{\delta(x_1, x_2)}{\delta(z,v)}\\
+=\begin{vmatrix} 1 & 1 \\ 0 & 1 \end{vmatrix}\\
+=1
+$$
+
+
+We can now develop our joint probability distribution with our transformed variables. We will do some substitution a little later.
+
+$$
+g(z, v)=\lambda^{-\lambda(z+v+v)}\\
+=\lambda^{-\lambda(z+2v)}
+
+$$
+
+Please note that v>0 and z is bounded from -infinity to infinity 
+
+Recall our substitution 
+
+$$
+z=x_1-v\\
+v=x_1-z
+$$
+Some additional conditions
+
+$$
+v>-z,-\infty <z<\infty\\
+v>0,z>0
+$$
+
+With our transformed PDF, we can use the conditions we have derived to assemble our integration. Rather than going through every step of the integration, I will highlight the process. Remove the lambda squared since it is a constant, then apply u substitution where u is x+2v. After u substitution, we need to evaluate the resulting improper integral by taking the limit as some arbitrary upper bound goes to infinity. 
+
+http://tutorial.math.lamar.edu/Classes/CalcII/ImproperIntegrals.aspx
+
+For z greater than -infinity but less than 0 
+
+$$
+\int _{ -x }^{ \infty  }g(z,v)dv\\
+ \int _{ -x }^{ \infty  }{ \lambda ^{ { 2 } } } { e }^{ -\lambda (x+2v) }dv\\
+=\frac{1}{2}e^{\lambda x}
+$$
+
+for z greater than 0
+
+$$
+\int _{ x }^{ \infty  }g(z,v)dv\\
+ \int _{ x }^{ \infty  }{ \lambda ^{ { 2 } } } { e }^{ -\lambda (x+2v) }dv\\
+=\frac{1}{2}e^{-\lambda x}
+$$
+
+The probability density function is 
+
+$$
+g(z) =\frac{1}{2}e^{\lambda x}\ ,-\infty<z<\infty\\
+=\frac{1}{2}e^{-\lambda x}\ ,0<z<\infty
+$$
+
+Now we can combine our equations with our problem statment 
+
+$$
+f_z(Z)=(1/2)\lambda e^{-\lambda |z|} \\
+=(1/2)\lambda e^{-\lambda |x_1+x_2|} \\
+$$
+
+Hence proved 
+
+#1 on page 320-321
+
+Let X be a continuous random variable with mean µ = 10 and variance σ2 = 100/3. Using Chebyshev’s Inequality, find an upper bound for the following probabilities:
+
+a)
+
+$$
+P(|X-10|\ge2)=P(|X-10|\ge.2\sqrt3 \frac{10}{\sqrt3})\le\frac{1}{(.2\sqrt3)^{2}}\le8.33
+$$
+
+b)
+
+$$
+P(|X-10|\ge5)=P(|X-10|\ge.5\sqrt3 \frac{10}{\sqrt3})\le\frac{1}{(.5\sqrt3)^{2}}\le1.33
+$$
+
+c)
+
+$$
+P(|X-10|\ge9)=P(|X-10|\ge.9\sqrt3 \frac{10}{\sqrt3})\le\frac{1}{(.9\sqrt3)^{2}}\le0.412
+$$
+
+d)
+
+$$
+P(|X-10|\ge20)=P(|X-10|\ge2\sqrt3 \frac{10}{\sqrt3})\le\frac{1}{(2\sqrt3)^{2}}\le0.083
+$$
+
+
+
+
+
