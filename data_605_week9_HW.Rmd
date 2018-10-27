@@ -1,0 +1,162 @@
+---
+title: "DATA 605 WEEK 9 HW"
+author: "Vinicio Haro"
+date: "10/27/2018"
+output: html_document
+---
+
+The price pf one share of stock in the Pilsdorff Beer Company is given by Yn on the nth day of the year. Finn observes that the differences Xn = Yn+1 - Yn appear to be independent random variables with a common distribution having mean u=0 and variance sigma squared =1/4. If Y1=100, estimate the probability of Y365 for each case.
+
+We first need to use the information given to find the standard deviation and expected values. 
+
+$$
+X_n=Y_{n+1}-Y_n\\
+Y_2=X_1+Y_1\\
+E(Y_2)=E(X_1)+E(Y_1)\\
+=0+100\\
+=100
+$$
+
+$$
+V(Y_2)=V(X_1)+V(Y_1)\\
+=1/4+0\\
+=1/4
+$$
+Apply the same formula and we will find the expected value of Y356 and the variance of Y365
+
+$$
+X_n=Y_{n+1}-Y_n\\
+Y_{n+1}=X_n-Y_n\\
+Y_{365}=X_{364}+...+X_1+Y_1\\
+E(Y_{365})=E(X_{364}+...+X_1+Y_1)\\
+=100
+$$
+$$
+V(Y_{365})=V(X_{364})+...+V(X_1)+V(Y_1)\\
+=364(1/4)\\
+=\frac{365}{4}\\
+\sigma=\sqrt\frac{365}{4} 
+$$
+
+a) 
+
+$$
+\ge100\\
+P(Y_{365}\ge100)=P(Y_{365}-100\ge0)=P(\frac{Y_{365}-100}{\sqrt\frac{365}{4}}\ge0)
+$$
+=0.5 by the central limit theorem
+
+b) 
+
+$$
+\ge110\\
+P(Y_{365}\ge10)=P(Y_{365}-100\ge10)=P(\frac{Y_{365}-100}{\sqrt\frac{365}{4}}\ge \frac{10}{\sqrt\frac{365}{4}})
+$$
+
+=0.147 by the central limit theorem 
+
+c) 
+
+$$
+\ge120\\
+P(Y_{365}\ge20)=P(Y_{365}-100\ge20)=P(\frac{Y_{365}-100}{\sqrt\frac{365}{4}}\ge \frac{20}{\sqrt\frac{365}{4}})
+$$
+=0.018 by the central limit theorem 
+
+2)
+Calculate the expected value and variance of the binomial distribution using the momeent generating function
+
+https://www.thoughtco.com/moment-generating-function-binomial-distribution-3126454
+
+Find the moment generating function, then compute first and second derivative of the derived MGF. 
+
+We can use an identity as well 
+http://mathworld.wolfram.com/BinomialIdentity.html
+
+Bionimal Coefficient
+https://en.wikipedia.org/wiki/Binomial_coefficient
+
+$$
+M(t)=E(e^{xt})\\
+=\sum _{ x=0 }^{ n }{ { e }^{ xt }\begin{pmatrix} n \\ x \end{pmatrix}{ P }^{ x }(1-p)^{n-x} } \\
+=\sum _{ x=0 }^{ n }{ { e }^{ xt }{ p }^{ x }\begin{pmatrix} n \\ x \end{pmatrix}(1-p)^{n-x} }
+$$
+
+let
+
+$$
+y={ e }^{ xt }{ p }\\
+z=(1-p)
+$$
+
+Then use the binomial coefficient
+
+$$
+=\sum _{ x=0 }^{ n }{ y^{x}\begin{pmatrix} n \\ x \end{pmatrix}z^{n-x} }\\
+=\sum _{ x=0 }^{ n }{ \begin{pmatrix} n \\ x \end{pmatrix}y^{x}z^{n-x} }\\
+=(y+z)^{n}
+$$
+
+Substitue in our temp variables to write out the MGF
+
+$$
+M(t)=(e^{t}p+(1-p))^{n}
+$$
+
+Now we find the Expected value and the variance using our moment generating function. The expected value is the first derivative and the variance is the second derivative 
+
+Expected value 
+
+$$
+\mu=M'(t)=n(e^{t}p+0)^{n-1}(e^{t}p)\\
+M'(0)=np\\
+\mu=np
+$$
+
+Variance
+
+$$
+M''(t)=np+n^{2}p^{2}-np^{2}\\
+\sigma^{2}=np(1-p)
+$$
+
+3) Calculate the expected value and variance of the exponential distribution using the moment generating function 
+
+follow the tutorial here 
+https://onlinecourses.science.psu.edu/stat414/node/139/
+
+We need to evaluate the imporoper integral. We integrate using u sub, then take the limit of some arbitrary upper bound. This is a similar integration that we have seen in the past. I will bypass the step by step and proceed to taking the limit of the result. 
+
+$$
+M(t)=E(e^{tx})=\int _{ 0 }^{ \infty  }{ { e }^{ tx }\lambda { e }^{ -\lambda x }dx } \\
+=\int _{ 0 }^{ \infty  }\lambda e^{tx-\lambda x}dx\\
+=\int _{ 0 }^{ \infty  }\lambda e^{x(t-\lambda)}dx\\
+=\frac{t}{t-\lambda}lim_{a->\infty}e^{(t-\lambda)a}-1\\
+M(t)=\frac{1}{1-\lambda t}
+$$
+
+Expected Value 
+
+$$
+M'(t)=\frac{-\lambda}{(\lambda-t)^{2}}\\
+M'(0)=\frac{1}{\lambda}\\
+\mu=\frac{1}{\lambda}
+$$
+
+Variance
+
+Use https://www.wolframalpha.com/input/?i=second+derivative+(1%2F(1%2Bnx)) to find second derivatives 
+
+$$
+M''(t)=\frac{2\lambda^{2}}{(-\lambda t+1)^{3}}\\
+M''(0)=\lambda^{2}
+$$
+
+
+
+
+
+
+
+
+
