@@ -1,0 +1,80 @@
+---
+title: "DATA 605 HW 10"
+author: "Vinicio Haro"
+date: "November 2, 2018"
+output: html_document
+---
+
+
+Smith is in jail and has 1 dollar; he can get out on bail if he has 8 dollars. A guard agrees to make a series of bets with him. If Smith bets A dollars, he wins A dollars with probability .4 and loses A dollars with probability .6.
+Find the probability that he wins 8 dollars before losing all of his money if:
+
+(a) he bets 1 dollar each time (timid strategy)
+
+What are we given? Well we know that the probability of losing is .6, therfore the probability of winning would be .4. Let p=.4 and q=.6. Let x=1 and y=8
+
+$$
+\frac{(\frac{q}{p})^{x}-1}{(\frac{q}{p})^{y}-1}
+
+$$
+
+$$
+\frac{1-(\frac{.6}{.4})^{1}}{1-(\frac{.6}{.4})^{8}}\\
+=0.02
+$$
+The probability comes out to roughly 0.02 
+
+verify
+```{r}
+(1.5^1-1)/(1.5^8-1)
+```
+
+But what is the underlying mathematics at play? Well he only bets 1 dollar at a time so the states are 0,1,2,3,4,5,6,7 and 8. We want to show
+
+$$
+P_i=(S_8<S_0)=P(S_8<S_0|X_0=i)
+$$
+
+
+(b) he bets, each time, as much as possible but not more than necessary to bring his fortune up to 8 dollars (bold strategy)
+
+This method is a little more involved.We need to develop a transition matrix as follows.The states on our chain are 0, 1, 2, 4, and 8 dollars. 
+
+$$
+\begin{bmatrix} 1 & 0 & 0 & 0 & 0 \\ .6 & 0 & .4 & 0 & 0 \\ .6 & 0 & 0 & .4 & 0 \\ .6 & 0 & 0 & 0 & .4 \\ 0 & 0 & 0 & 0 & 1 \end{bmatrix}
+$$
+
+
+Solving this will be much more involved so we will use r. 
+
+Initialize the system
+```{r}
+state_matrix <- matrix(c(1,0,0,0,0,0.6,0,0.4,0,0,0.6,0,0,0.4,0,0.6,0,0,0,0.4,0,0,0,0,1), ncol=5,nrow=5, byrow = TRUE)
+state_matrix
+```
+
+create the initial state vector 
+```{r}
+initial <- matrix(c(0,1,0,0,0), ncol=5,nrow = 1,byrow = TRUE)
+initial
+```
+
+
+Solve the resulting system of equations 
+
+```{r}
+p1 <- initial%*%state_matrix
+p2<-p1%*%state_matrix
+p3<-p2%*%state_matrix
+p4<-p3%*%state_matrix
+p4
+```
+
+Our probability is 0.064
+
+(c) Which strategy gives Smith the better chance of getting out of jail?
+
+By comparing the results of our solution vectors,the bold strategy gives Smith the best chance to get out of jail. 
+
+
+
