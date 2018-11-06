@@ -1,0 +1,106 @@
+---
+title: "DATA 605 HW 11"
+author: "Vinicio Haro"
+date: "November 6, 2018"
+output: html_document
+---
+
+Load in the cars data and view basic summary 
+```{r}
+attach(cars)
+summary(cars)
+```
+
+Visualize the relationsip between the two variables 
+```{r}
+plot(cars$speed, cars$dist, xlab='Speed (mph)', ylab='Stopping Distance (ft)', 
+     main='Stopping Distance vs. Speed')
+```
+
+Create a simple regression model to model distance as a function of speed 
+```{r}
+lmod <- lm(dist ~ speed, data=cars)
+summary(lmod)
+
+```
+
+Plot the linear model on the scatterplot we produced earlier 
+```{r}
+plot(cars$speed, cars$dist, xlab='Speed (mph)', ylab='Stopping Distance (ft)', 
+     main='Stopping Distance vs. Speed')
+abline(lmod)
+```
+
+It seems that this model is a decent fit. It has an adjusted r squared of .6. Lets see how the distribution of our response variable holds against the normal distribution 
+
+```{r}
+x <- cars$dist 
+h<-hist(x, breaks=10, col="red", xlab="Distance", 
+    main="Histogram with Normal Curve") 
+xfit<-seq(min(x),max(x),length=40) 
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x)) 
+yfit <- yfit*diff(h$mids[1:2])*length(x) 
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+Based on this chart, it seems as if though some sort of transform can help increase model accuracy. 
+
+Lets run diagnostics on our model 
+Residuals~There is a skew in our residuals as the spread does not exactly follow a normal distribution 
+```{r}
+res1<-lmod$residuals
+hist(res1)
+```
+
+QQ-Plots
+```{r}
+qqnorm(lmod$residuals)
+qqline(lmod$residuals)
+```
+
+QQ-Plots seem to tell the same story. While the model we built is not bad, it can be better.What does constant variance check say?
+
+```{r}
+plot(fitted(lmod), residuals(lmod), xlab="fitted", ylab="residuals")
+abline(h=0);
+plot(fitted(lmod), sqrt(abs(residuals(lmod))), xlab="fitted", ylab=expression(sqrt(hat(epsilon))))
+```
+
+It looks like variance is constant but one can also make the argument that there is some sort of curve. We need a more robust test. The square root of the residuals make a stronger visual argument that there is no constant variance. 
+
+```{r}
+library(olsrr)
+ols_test_breusch_pagan(lmod)
+
+```
+
+If we select alpha to be .05, then at the 95% level, we do not have constant variance according to this test. We need some sort of transformation on the response variable. 
+
+How do we even determine what transform to apply? Bring in Box-Cox
+```{r}
+require(MASS)
+boxcox(lmod, plotit=T, lambda=seq(0, 1.0, by=0.5))
+
+```
+
+We can transform our response variable by raising it to the power lambda. In this case, the Box-Cox produced a lambda of .05. Our newmodel should be distanced raised to the .05 power.
+
+Does it improve our model? Lets see
+```{r}
+lmod2 <- lm(dist^.05 ~ speed, data=cars)
+summary(lmod2)
+```
+
+Adjusted r squared is pretty much the same. How about diagotics plots?
+```{r}
+res2<-lmod2$residuals
+hist(res2);
+qqnorm(lmod$residuals)
+qqline(lmod$residuals);
+plot(fitted(lmod2), residuals(lmod2), xlab="fitted", ylab="residuals")
+abline(h=0);
+ols_test_breusch_pagan(lmod2)
+
+```
+
+Residuals look much better when it comes to their distribution being normal and constant variance condition is met. A transform by Box-Cox was a good choice. 
