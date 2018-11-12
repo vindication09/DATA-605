@@ -1,0 +1,267 @@
+---
+title: "DATA 605 Week 13 HW 13"
+author: "Vinicio Haro"
+date: "November 9, 2018"
+output: html_document
+---
+1) Use integration by substitution to solve the integral below.
+
+$$
+\int { 4{ e }^{ -7x }dx } 
+$$
+Select u to be the g(x) inside f(g(x))
+$$
+u=-7x\\
+du=-7dx\\
+-\frac{du}{7}=dx
+$$
+
+Substitute dx with our du (reverse chain rule) pull out the 4 (constant) from the integrand
+$$
+\frac{-4}{7} \int { { e }^{ u }du } \\
+\frac{-4}{7}e^{u}+c\\
+\frac{-4}{7}e^{-7x}+c
+
+$$
+
+
+2) Biologists are treating a pond contaminated with bacteria. The level of contamination is changing at a rate of
+
+$$
+\frac{dN}{dt}=\frac{-3150}{t^{4}}-220
+$$
+bacteria per cubic centimeter per day, where t is the number of days since treatment began. Find a
+function N( t ) to estimate the level of contamination if the level after 1 day was 6530 bacteria per cubic centimeter.
+
+We are given rate, therfore we need to derive a "position" function by taking the integral of th rate function. 
+
+We can re-wite the first term of the integrand using a negative power so that we may easily apply the power rule rather than the quotient rule for integration. Evaluate the integral term by term and then simplify
+
+$$
+ \int {(\frac{-3150}{t^{4}}-220)dt}\\
+ \int {(-3150{t^{-4}}-220)dt}\\
+  \int-3150t^{-4}dt - \int -220dt\\
+  -3150\int t^{-4}dt - 220\int dt\\
+  -3150 \frac{-1}{3} t^{-3} - 220t\\
+N(t)=  \frac{1050}{t^{3}}-220t+c
+$$
+
+Now that we have identified our N(t) we need to apply the given initial conditions. We are given that N(1)=6530,hence we want to solve for our constant c using the initial condition
+
+$$
+6530=  \frac{1050}{1^{3}}-220(1)+c\\
+6530=1050-220+c\\
+6530-1050+220=c\\
+5700=c
+$$
+
+Hence our final answer is 
+
+$$
+N(t)=  \frac{1050}{t^{3}}-220t+5700
+$$
+
+
+3) Find the total area of the red rectangles in the figure below, where the 3. equation of the line is f(x)=2x-9
+
+There are 4 rectangles in the plot of this function within the closed interval [4.5,8.5] (It is hard to tell from the image) 
+
+We can do this using part 2 of the fundamental theorem of caluclus or by inspection. 
+
+By inspection we can calculate the area of each rectangle and then add them up. A=lxw
+
+$$
+A1=(1)(5.5-4.5)=1\\
+A2=(1)(6.5-5.5)=3\\
+A3=(1)(7.5-5.5)=5\\
+A4=(1)(8.5-6.5)=7\\
+A=A1+A2+A3+A4=1+3+5+7=16
+$$
+
+Using part 2 of the fundamental theorem of calculus 
+
+$$
+\int _{ 4.5 }^{ 8.5 }{ 2x-9 } dx\\
+$$
+
+Lets use R to evaluate this simple integral at the end points 
+```{r}
+## define the integrated function
+integrand <- function(x)
+  {
+  2*x-9
+  }
+
+
+## integrate the function from 0 to infinity
+integrate(integrand, lower = 4.5, upper = 8.5)
+
+```
+
+
+4) Find the area of the region bounded by the graphs of the given equations.
+
+$$
+y=x^{2}-2x-2\\
+y=x+2
+$$
+
+Lets visualize 
+```{r}
+fx <- function(x)
+  {
+  (x^2)-2*x-2
+}
+
+gx <- function(x)
+  {
+  x+2
+}
+
+plot (fx, -15, 15)
+plot (gx, -5, 5, add=TRUE)
+```
+
+We want to find the area enclosed by f(x) and by g(x). The first thing we need to do is get exact bounds of integration. We can sort of tell where they are by inspection but we can also use some algebra to find the bounds of integration. How do we find then using algebra? 
+
+Set f(x)=g(x) and solve for x . The intersection of the two curves are the bounds of integration. We should get two values for x because of the quadratic term. 
+
+$$
+x^{2}-2x-2=x+2\\
+x^{2}-3x-4=0\\
+(x-4)(x+1)=0\\
+x=4\\
+x=-1
+$$
+The formula for finding the area enclosed by two curves is as follows: 
+http://tutorial.math.lamar.edu/Classes/CalcI/AreaBetweenCurves.aspx
+
+$$
+\int _{ a }^{ b }{ (top-bottom) } dx
+$$
+
+We know a=-1 and b=4,the top function is the function that encloses the upper half of the area and the bottom function is the function that encloses the bottom of the area. In our case, the top function is the straight line while the bottom function is the parabola 
+
+$$
+\int _{ -1 }^{ 4 }{ (x+2)-(x^{2}-2x-2) } dx\\
+\int _{ -1 }^{ 4 } {(x+2-x^{2}+2x+2)dx}\\
+\int _{- 1 }^{ 4 } {(-x^{2}+3x+4)dx}
+$$
+
+
+Lets use R to integrate and calculate 
+```{r}
+## define the integrated function
+integrand <- function(x)
+  {
+  -x^{2}+3*x+4
+  }
+
+
+## integrate the function from 0 to infinity
+integrate(integrand, lower = -1, upper = 4)
+```
+
+
+5) A beauty supply store expects to sell 110 flat irons during the next year. It costs $3.75 to store one flat iron for one year. There is a fixed cost of $8.25 for each order. Find the lot size and the number of orders per year that will minimize inventory costs
+
+This is a simple optimization problem. When it comes to opitmization problems, we need to undertsand the givens and identify a relationship between the givens. 
+
+We are trying to optimize the cost function but the biggest challenge at the moment is to derive the cost function. We can use the information in the problem statement to help us accomplish this task. 
+
+We let x be the number of flat irons per order. The numberof orders is found from the ratio 110/x. 
+
+The yearly carrying cost is 3.72 times the number of flat irons, divided by 2. (3.72x)/2
+
+The yearly ordering cost is the number of flat irons expected to be sold multiplied by the fixed cost per order, divded by the number of flat irons (8.25(110))/x
+
+The cost function is assembled from all of these pieces. 
+
+We need to derive C(x) and set c'(x)=o, to find the ciritcal points. Once we find the ciritcal points, we determine which one minimizes C(x)
+
+$$
+C(x)=1.86x + \frac{907.5}{x}\\
+C '(x)=1.86-\frac{907.5}{x^{2}}
+$$
+Solve for ciritcal points 
+
+$$
+0=1.86-\frac{907.5}{x^{2}}\\
+\frac{907.5}{x^{2}}=1.86\\
+907.7=1.86 x^{2}\\
+ 488.0108=x^{2}\\
+ +22.09097=x\\
+ -22.09097=x
+$$
+Reject the negative ,hence
+
+$$
++22.09097=x
+$$
+We can round this to 22. 
+
+Apply second derivative test to check if this is indeed a minimum. We need to evaluate C''(x)
+
+$$
+C ''(x)=\frac{907.5}{x^{3}}\\
+C''(22)=\frac{907.5}{22^{3}}>0
+$$
+
+Hence we conclude that x=22 minimizes function C(x)
+22 flat irons and 5 orders per year minimizes cost 
+
+6) Use integration by parts to solve the integral below
+
+$$
+\int { ln(9x)x^{6}dx } 
+$$
+
+We need to apply the following formula for integration by parts. We also need to be strategic when selecting u and dv. We pick dv to be the term that can be integrated easily while u is the term that can be derived easily. For our problem, the ln term can be derived much easier than integrated. The power term can be derived or integrated with the same ease but we should intgrate this term since we ae differentiating the other. 
+
+$$
+uv-\int vdu \\
+u=ln(9x)\\
+du=\frac{1}{x}dx\\
+dv=x^{6}\\
+v=\frac{1}{7}x^{7}
+$$
+
+By integration by parts, we have the following integral. Simplify and evaluate 
+
+$$
+\frac{x^{7}ln(9x)}{7}-\int \frac{1}{7}x^{7}\frac{1}{x}dx\\
+\frac{x^{7}ln(9x)}{7}-\frac{1}{7} \int \frac{x^{7}}{x}dx\\
+\frac{x^{7}ln(9x)}{7}-\frac{1}{7}\int x^{6}dx\\
+\frac{x^{7}ln(9x)}{7}-\frac{1}{7}(\frac{x^{7}}{7})+C\\
+\frac{x^{7}ln(9x)}{7}-\frac{x^{7}}{49}+C
+$$
+
+OR
+
+$$
+\frac{x^{7}ln(9x)}{7}-\frac{x^{7}}{49}+C\\
+\frac{x^{7}}{7}[ln(9x)-\frac{1}{7}]+C
+$$
+
+7) Determine whether f(x) is a probability density function on the interval 1, e6 . If not, determine the value of the definite integral
+
+$$
+f(x)=\frac{1}{6x}
+$$
+
+Evaluate the definite integral
+
+$$
+\int _{ 1 }^{ { e }^{ 6 } }{ \frac { 1 }{ 6x } dx } \\
+\frac{1}{6} \int _{ 1 }^{ { e }^{ 6 } }{ \frac { 1 }{ x } dx } \\
+\frac{1}{6}(ln(e^{6})-ln(1))\\
+\frac{1}{6}(6-0)\\
+=1
+$$
+Hence, f(x) is a probability density function on the closed interval [1,e6]
+
+
+
+
+
+
