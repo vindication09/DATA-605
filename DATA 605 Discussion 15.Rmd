@@ -1,0 +1,74 @@
+---
+title: "DATA 605 Discussion 15"
+author: "Vinicio Haro"
+date: "12/2/2018"
+output: html_document
+---
+
+Problem 17 in 12.7
+
+A function z=f(x, y) and a point P are given. Find the equation of the tangent plane to f at point P. 
+
+$$
+f(x, y)=2x^{2}y-4xy^{2}\\
+P=(2, 3)
+$$
+
+A full break down on the workflow for this type of problem can be found here 
+https://www.math.hmc.edu/calculus/tutorials/tangentplanes/tangentplanes.pdf
+
+Lets start:
+We need to compute the partial derivative with respect to x and the partial derivative when respect to y. An easy thing to remember is when computing the partial derivative with respect to some variable, you can treat any other variable as a constant. 
+
+Lets compute partial derivative with respect to x
+Since I am considering anyting that is not an x as a constant, I like to re-arrange the factors in some of my terms such that the format is (constant)(variables)
+This is not a necessary step, however for someone who might be seeing partial derivatives for the first time, it make make things a little more clear. 
+$$
+f(x, y)=2x^{2}y-4xy^{2}\\
+f(x, y)=2yx^{2}-4y^{2}x\\
+f_{x}(x, y)=4yx-4y^{2}
+$$
+
+Repeat the same for finding the partial derivative with respect to y. There is no need to re-arrange the factors in the term because the factors which we consider to be constants are already in front of the y. 
+$$
+f(x, y)=2x^{2}y-4xy^{2}\\
+f_{y}(x, y)=2x^{2}-8xy
+$$
+We now evaluate each of our partial derivatives at the values given by point P. We also evaluate our original f(x, y)
+$$
+P=(2, 3)\\
+f(x, y)=2x^{2}y-4xy^{2}=2(2)(2)(3)-4(2)(3)(3)=-48\\
+f_{x}(2, 3)=4yx-4y^{2}=4(2)(3)-4(3)(3)=-12\\
+f_{y}(2, 3)=2x^{2}-8xy=2(2)(2)-8(2)(3)=-40
+$$
+
+We now have computed values for each of the two partial derivatives, we can proceed to use the equation of the plane to find our z
+$$
+P=(x_0, y_0)\\
+z=f(x, y)+f_{x}(x, y)(x-x_0+f_{y}(x, y)(y-y_0)
+$$
+
+Fill in with our computations 
+$$
+P=(2, 3)\\
+z=f(2, 3)+f_{x}(2, 3)(x-2)+f_{y}(2, 3)(y-3)\\
+z=-48-12(x-2)-40(y-3)
+$$
+
+We have computed the equation of the tangent plane at point P. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
