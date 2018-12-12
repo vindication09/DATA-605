@@ -1,0 +1,100 @@
+---
+title: "DATA 605 Final"
+author: "Vinicio Haro"
+date: "December 10, 2018"
+output: html_document
+---
+
+Your final is due by the end of day on 12/16/2018.  You should post your solutions to your GitHub account or RPubs.  You are also expected to make a short presentation via YouTube  and post that recording to the board.  This project will show off your ability to understand the elements of the class. 
+
+Problem 1
+Pick one of the quantitative independent variables (Xi) from the data set below, and define that variable as  X.  Also, pick one of the dependent variables (Yi) below, and define that as Y.
+
+Lets pick y1 and x4.
+```{r}
+p1data = read.csv("https://raw.githubusercontent.com/vindication09/DATA-605/master/data605_data.csv", header = TRUE)
+
+p1<-subset(p1data, select=c(Y1, X4))
+
+summary(p1)
+```
+
+Probability.   Calculate as a minimum the below probabilities a through c.  Assume the small letter "x" is estimated as the 3d quartile of the X variable, and the small letter "y" is estimated as the 1st quartile of the Y variable.  Interpret the meaning of all probabilities.
+
+Before we compute any probailities, we need to gather the values that fall within the desired quartile. We will be required to fill in the entries for problem 3
+```{r}
+Y3q_greater = subset(p1, Y1 > 18.55)
+
+Y3q_lesser = subset(p1, Y1 <= 18.55)
+
+X4q_greater_given_yq3_greater = nrow(subset(Y3q_greater, X4 > 12.525))
+
+X4q_lesser_given_Y3q_greater = nrow(subset(Y3q_greater, X4 <= 12.525))
+
+X4q_greater_given_Y3q_lesser = nrow(subset(Y3q_lesser, X4 > 12.525))
+
+X4q_lesser_given_Y3q_lesser = nrow(subset(Y3q_lesser, X4 <= 12.525))
+
+```
+
+
+a.P(X>x | Y>y)
+```{r}
+nrow(subset(Y3q_greater, X4 > 12.525)) / nrow(Y3q_greater)
+```
+
+b. P(X>x, Y>y)	
+```{r}
+nrow(subset(Y3q_greater, X4 > 12.525)) / nrow(p1)
+```
+
+c. P(X<x | Y>y)
+```{r}
+nrow(subset(Y3q_greater, X4 < 12.525)) / nrow(Y3q_greater)
+```
+
+In addition, make a table of counts as shown below.
+
+Lets take the counts we computed and put them all into a data frame
+```{r}
+p2 = data.frame(
+X4q_lesser_given_Y3q_lesser,
+X4q_greater_given_Y3q_lesser,
+X4q_greater_given_Y3q_lesser + X4q_greater_given_Y3q_lesser,
+X4q_lesser_given_Y3q_greater,
+X4q_greater_given_yq3_greater,
+X4q_greater_given_yq3_greater + X4q_lesser_given_Y3q_greater,
+X4q_lesser_given_Y3q_lesser + X4q_lesser_given_Y3q_greater,
+X4q_greater_given_Y3q_lesser + X4q_greater_given_yq3_greater,
+nrow(p1))
+
+p2 = matrix(p2, nrow = 3, ncol = 3)
+
+p2 = data.frame(p2)
+
+rownames(p2) <- c('<=1st q for x', '>1st q for x', 'Total')
+
+colnames(p2) <- c('<=3rd q for y', '>3rd q for y', 'Total')
+
+print(p2)
+
+```
+
+5 points.  Does splitting the training data in this fashion make them independent? Let A be the new variable counting those observations above the 1st quartile for X, and let B be the new variable counting those observations above the 1st quartile for Y.    Does P(AB)=P(A)P(B)?   Check mathematically, and then evaluate by running a Chi Square test for association.
+
+```{r}
+#3
+X_1q_b_cnt = nrow(subset(table, X1 > 6.85))
+Y_1q_b_cnt = nrow(subset(table, Y1 > 18.55))
+X_1q_b_AND_Y_1q_b_cnt = nrow(subset(table, X1 > 6.85 & Y1 > 18.55))
+
+P_AnB = X_1q_b_AND_Y_1q_b_cnt / total_cnt
+P_A = (X_1q_b_cnt / total_cnt)
+P_B = (Y_1q_b_cnt / total_cnt)
+P_ATimesP_B = P_A * P_B
+
+P_AnB
+P_ATimesP_B
+```
+
+
