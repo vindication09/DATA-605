@@ -1,0 +1,179 @@
+---
+title: "DATA 605 Final"
+author: "Vinicio Haro"
+date: "December 10, 2018"
+output: html_document
+---
+
+Your final is due by the end of day on 12/16/2018.  You should post your solutions to your GitHub account or RPubs.  You are also expected to make a short presentation via YouTube  and post that recording to the board.  This project will show off your ability to understand the elements of the class. 
+
+Problem 1
+Pick one of the quantitative independent variables (Xi) from the data set below, and define that variable as  X.  Also, pick one of the dependent variables (Yi) below, and define that as Y.
+
+Lets pick y1 and x4.
+```{r}
+p1data = read.csv("https://raw.githubusercontent.com/vindication09/DATA-605/master/data605_data.csv", header = TRUE)
+
+p1<-subset(p1data, select=c(Y1, X4))
+
+summary(p1)
+```
+
+Probability.   Calculate as a minimum the below probabilities a through c.  Assume the small letter "x" is estimated as the 3d quartile of the X variable, and the small letter "y" is estimated as the 1st quartile of the Y variable.  Interpret the meaning of all probabilities.
+
+Before we compute any probailities, we need to gather the values that fall within the desired quartile. We will be required to fill in the entries for problem 3
+```{r}
+Y3q_greater = subset(p1, Y1 > 18.55)
+Y3q_lesser = subset(p1, Y1 <= 18.55)
+X4q_greater_given_yq3_greater = nrow(subset(Y3q_greater, X4 > 12.525))
+X4q_lesser_given_Y3q_greater = nrow(subset(Y3q_greater, X4 <= 12.525))
+X4q_greater_given_Y3q_lesser = nrow(subset(Y3q_lesser, X4 > 12.525))
+X4q_lesser_given_Y3q_lesser = nrow(subset(Y3q_lesser, X4 <= 12.525))
+```
+
+
+a.P(X>x | Y>y)
+```{r}
+nrow(subset(Y3q_greater, X4 > 12.525)) / nrow(Y3q_greater)
+```
+
+b. P(X>x, Y>y)	
+```{r}
+nrow(subset(Y3q_greater, X4 > 12.525)) / nrow(p1)
+```
+
+c. P(X<x | Y>y)
+```{r}
+nrow(subset(Y3q_greater, X4 < 12.525)) / nrow(Y3q_greater)
+```
+
+In addition, make a table of counts as shown below.
+
+Lets take the counts we computed and put them all into a data frame
+```{r}
+p2 = data.frame(
+X4q_lesser_given_Y3q_lesser,
+X4q_greater_given_Y3q_lesser,
+X4q_greater_given_Y3q_lesser + X4q_greater_given_Y3q_lesser,
+X4q_lesser_given_Y3q_greater,
+X4q_greater_given_yq3_greater,
+X4q_greater_given_yq3_greater + X4q_lesser_given_Y3q_greater,
+X4q_lesser_given_Y3q_lesser + X4q_lesser_given_Y3q_greater,
+X4q_greater_given_Y3q_lesser + X4q_greater_given_yq3_greater,
+nrow(p1))
+p2 = matrix(p2, nrow = 3, ncol = 3)
+p2 = data.frame(p2)
+rownames(p2) <- c('<=1st q for x', '>1st q for x', 'Total')
+colnames(p2) <- c('<=3rd q for y', '>3rd q for y', 'Total')
+print(p2)
+```
+
+5 points.  Does splitting the training data in this fashion make them independent? Let A be the new variable counting those observations above the 1st quartile for X, and let B be the new variable counting those observations above the 1st quartile for Y.    Does P(AB)=P(A)P(B)?   Check mathematically, and then evaluate by running a Chi Square test for association.
+
+```{r}
+x4q_greater = nrow(subset(p1, X4 > 4.350))
+
+Y1q_greater = nrow(subset(p1, Y1 > 18.55))
+
+X4q_greater_Y1q_lesser = nrow(subset(p1, X4 > 4.350 & Y1 > 18.55))
+
+prob_AintersectB = X4q_greater_Y1q_lesser/nrow(p1) 
+
+probA =  x4q_greater / nrow(p1)
+
+ProbB = Y1q_greater / nrow(p1)
+
+prob_AB = probA * ProbB
+
+
+print(paste0(prob_AintersectB, " Not equal to ", prob_AB, " Hence not independent"))
+```
+
+Run a chi-squared test 
+```{r}
+
+X4q_greater = subset(p1, X4 > 4.350)
+
+Y1q_greater = subset(p1, Y1 > 18.55)
+
+chisq.test(X4q_greater$X4, Y1q_greater$Y1)
+```
+
+
+You are to register for Kaggle.com (free) and compete in the House Prices: Advanced Regression Techniques competition.  https://www.kaggle.com/c/house-prices-advanced-regression-techniques .  I want you to do the following.
+
+
+Read in the data 
+```{r}
+train = read.csv("https://raw.githubusercontent.com/vindication09/DATA-605/master/train.csv", header = TRUE)
+test= read.csv("https://raw.githubusercontent.com/vindication09/DATA-605/master/test.csv", header = TRUE)
+head(train, 10)
+```
+
+Basic EDA
+View Data types for each of the variables 
+```{r}
+str(train)
+```
+
+It seems we have many variables in this dataset which have multiple levels. I am almost certain that we do not need all or even most of these variables. We can systematically determine what variables to keep or not. 
+
+Check missing data 
+```{r}
+colSums(sapply(train, is.na))
+```
+
+Right off the bat, MiscFeature, PoolQC, and Alley can be eliminated. There are only 1460 rows, hence these variables are missing more than 50 percent of their total data. For the sake of time and simplicity, there are many things that can be done regarding dummy variables and encoding, however we will only focus on numerical variables. 
+
+```{r}
+nums <- unlist(lapply(train, is.numeric))  
+trainb<-train[ , nums]
+
+trainc<-subset(trainb, select=-c(Id))
+```
+
+
+5 points.  Descriptive and Inferential Statistics. Provide univariate descriptive statistics and appropriate plots for the training data set.  Provide a scatterplot matrix for at least two of the independent variables and the dependent variable. Derive a correlation matrix for any THREE quantitative variables in the dataset.  Test the hypotheses that the correlations between each pairwise set of variables is 0 and provide a 80% confidence interval.  Discuss the meaning of your analysis.  Would you be worried about familywise error? Why or why not?
+
+Descriptives
+```{r}
+summary(trainc)
+```
+
+Data documentation: 
+http://jse.amstat.org/v19n3/decock.pdf
+
+Plots
+```{r}
+library(DataExplorer)
+plot_missing(trainc)[1]
+#plot_histogram(wine_training2);plot_density(wine_training2)
+```
+
+Out of the selected numerical variables, they all hav less than 20% missing data. I would try to impute the missing values with the mean or mode, but it might be an effort outside the scope of DATA 605 but rather for DATA 621.
+```{r}
+plot_histogram(trainc)
+```
+
+Lets provide a scatterplot matrix for two of the predictor variables along with the response. Lets also overlay a correlation analysis and see the relationship between said variable and the response variable. 
+```{r}
+library(ggpubr)
+
+ggscatter(trainc, x = "GrLivArea", y = "SalePrice", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Above Grade Living Area", ylab = "Sales Price");
+
+ggscatter(trainc, x = "LotArea", y = "SalePrice", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Lot Area", ylab = "Sales Price")
+
+```
+
+Derive a correlation matrix for any THREE variables 
+Lets pick the two variables from the scatter plot and an additional variable such as 1stFlrSF
+```{r}
+corr_data<-subset(trainc,select=c("1stFlrSF","LotArea", "GrLivArea"))
+```
+
