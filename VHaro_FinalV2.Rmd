@@ -1,0 +1,559 @@
+---
+title: "DATA 605 Final"
+author: "Vinicio Haro"
+date: "December 10, 2018"
+output: html_document
+---
+
+Your final is due by the end of day on 12/16/2018.  You should post your solutions to your GitHub account or RPubs.  You are also expected to make a short presentation via YouTube  and post that recording to the board.  This project will show off your ability to understand the elements of the class. 
+
+Problem 1
+Pick one of the quantitative independent variables (Xi) from the data set below, and define that variable as  X.  Also, pick one of the dependent variables (Yi) below, and define that as Y.
+
+Lets pick y1 and x4.
+```{r}
+p1data = read.csv("https://raw.githubusercontent.com/vindication09/DATA-605/master/data605_data.csv", header = TRUE)
+
+p1<-subset(p1data, select=c(Y1, X4))
+
+summary(p1)
+```
+
+Probability.Calculate as a minimum the below probabilities a through c.  Assume the small letter "x" is estimated as the 3d quartile of the X variable, and the small letter "y" is estimated as the 1st quartile of the Y variable.  Interpret the meaning of all probabilities.
+
+
+Before we compute any probailities, we need to gather the values that fall within the desired quartile. We will be required to fill in the entries for problem 3
+```{r}
+Y3q_greater = subset(p1, Y1 > 18.55)
+Y3q_lesser = subset(p1, Y1 <= 18.55)
+X4q_greater_given_yq3_greater = nrow(subset(Y3q_greater, X4 > 12.525))
+X4q_lesser_given_Y3q_greater = nrow(subset(Y3q_greater, X4 <= 12.525))
+X4q_greater_given_Y3q_lesser = nrow(subset(Y3q_lesser, X4 > 12.525))
+X4q_lesser_given_Y3q_lesser = nrow(subset(Y3q_lesser, X4 <= 12.525))
+```
+
+We are gathering in order:
+-data where y is greater than the 1st quartile
+-data where y is less than the 1st quartile
+-data where y is greater than 1st quartile and x is greater than 3rd quartile
+-data where y greater than 1st but x less than 3rd
+-data where y less than 1st but x greater than 3rd
+-data where y less than 1st but x less than 3rd 
+
+a.P(X>x | Y>y)
+Find the probability that X > 1st quartile given Y > 3rd quartile 
+```{r}
+nrow(subset(Y3q_greater, X4 > 12.525)) / nrow(Y3q_greater)
+```
+
+b. P(X>x, Y>y)	
+Find the probability X > 1st quartile and Y is greater than the 3rd quartile 
+```{r}
+nrow(subset(Y3q_greater, X4 > 12.525)) / nrow(p1)
+```
+
+c. P(X<x | Y>y)
+Find the probability that X < 1st quartile given Y greater than 3rd quartile 
+```{r}
+nrow(subset(Y3q_greater, X4 < 12.525)) / nrow(Y3q_greater)
+```
+
+In addition, make a table of counts as shown below.
+
+Lets take the counts we computed and put them all into a data frame
+```{r}
+p2 = data.frame(
+X4q_lesser_given_Y3q_lesser,
+X4q_greater_given_Y3q_lesser,
+X4q_greater_given_Y3q_lesser + X4q_greater_given_Y3q_lesser,
+X4q_lesser_given_Y3q_greater,
+X4q_greater_given_yq3_greater,
+X4q_greater_given_yq3_greater + X4q_lesser_given_Y3q_greater,
+X4q_lesser_given_Y3q_lesser + X4q_lesser_given_Y3q_greater,
+X4q_greater_given_Y3q_lesser + X4q_greater_given_yq3_greater,
+nrow(p1))
+p2 = matrix(p2, nrow = 3, ncol = 3)
+p2 = data.frame(p2)
+rownames(p2) <- c('<=1st q for x', '>1st q for x', 'Total')
+colnames(p2) <- c('<=3rd q for y', '>3rd q for y', 'Total')
+print(p2)
+```
+
+5 points.  Does splitting the training data in this fashion make them independent? Let A be the new variable counting those observations above the 1st quartile for X, and let B be the new variable counting those observations above the 1st quartile for Y.    Does P(AB)=P(A)P(B)?   Check mathematically, and then evaluate by running a Chi Square test for association.
+
+```{r}
+x4q_greater = nrow(subset(p1, X4 > 4.350))
+
+Y1q_greater = nrow(subset(p1, Y1 > 18.55))
+
+X4q_greater_Y1q_lesser = nrow(subset(p1, X4 > 4.350 & Y1 > 18.55))
+
+prob_AintersectB = X4q_greater_Y1q_lesser/nrow(p1) 
+
+probA =  x4q_greater / nrow(p1)
+
+ProbB = Y1q_greater / nrow(p1)
+
+prob_AB = probA * ProbB
+
+
+print(paste0(prob_AintersectB, " Not equal to ", prob_AB, " Hence not independent"))
+```
+
+Run a chi-squared test 
+```{r}
+
+X4q_greater = subset(p1, X4 > 4.350)
+
+Y1q_greater = subset(p1, Y1 > 18.55)
+
+chisq.test(X4q_greater$X4, Y1q_greater$Y1)
+```
+A high p value indicates that we fail to reject the null hypothesis. I do not trust this test given that our n is incredibly small. 
+
+You are to register for Kaggle.com (free) and compete in the House Prices: Advanced Regression Techniques competition.  https://www.kaggle.com/c/house-prices-advanced-regression-techniques .  I want you to do the following.
+
+
+Read in the data 
+```{r}
+train = read.csv("https://raw.githubusercontent.com/vindication09/DATA-605/master/train.csv", header = TRUE)
+
+test= read.csv("https://raw.githubusercontent.com/vindication09/DATA-605/master/test.csv", header = TRUE)
+
+head(train, 10)
+```
+
+Basic EDA
+View Data types for each of the variables 
+```{r}
+str(train)
+```
+
+It seems we have many variables in this dataset which have multiple levels. I am almost certain that we do not need all or even most of these variables. We can systematically determine what variables to keep or not. 
+
+Check missing data 
+```{r}
+colSums(sapply(train, is.na))
+```
+
+Right off the bat, MiscFeature, PoolQC, and Alley can be eliminated. There are only 1460 rows, hence these variables are missing more than 50 percent of their total data. 
+
+5 points.  Descriptive and Inferential Statistics. Provide univariate descriptive statistics and appropriate plots for the training data set.  Provide a scatterplot matrix for at least two of the independent variables and the dependent variable. Derive a correlation matrix for any THREE quantitative variables in the dataset.  Test the hypotheses that the correlations between each pairwise set of variables is 0 and provide a 80% confidence interval.  Discuss the meaning of your analysis.  Would you be worried about familywise error? Why or why not?
+
+Descriptives
+```{r}
+
+nums <- unlist(lapply(train, is.numeric))  
+trainb<-train[ , nums]
+trainc<-subset(trainb, select=-c(Id))
+summary(trainc)
+```
+
+Data documentation: 
+http://jse.amstat.org/v19n3/decock.pdf
+
+Plots
+```{r}
+library(DataExplorer)
+plot_missing(trainc)[1]
+```
+
+Out of the selected numerical variables, they all hav less than 20% missing data. I would try to impute the missing values with the mean or mode, but it might be an effort outside the scope of DATA 605 but rather for DATA 621.
+```{r}
+plot_histogram(trainc)
+```
+
+Full correlation matrix with all numerical variables 
+```{r}
+correlation_matrix <- round(cor(trainc),2)
+
+# Get lower triangle of the correlation matrix
+  get_lower_tri<-function(correlation_matrix){
+    correlation_matrix[upper.tri(correlation_matrix)] <- NA
+    return(correlation_matrix)
+  }
+  # Get upper triangle of the correlation matrix
+  get_upper_tri <- function(correlation_matrix){
+    correlation_matrix[lower.tri(correlation_matrix)]<- NA
+    return(correlation_matrix)
+  }
+  
+  upper_tri <- get_upper_tri(correlation_matrix)
+
+
+
+library(reshape2)
+
+# Melt the correlation matrix
+melted_correlation_matrix <- melt(upper_tri, na.rm = TRUE)
+
+# Heatmap
+library(ggplot2)
+
+ggheatmap <- ggplot(data = melted_correlation_matrix, aes(Var2, Var1, fill = value))+
+ geom_tile(color = "white")+
+ scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+   midpoint = 0, limit = c(-1,1), space = "Lab", 
+   name="Pearson\nCorrelation") +
+  theme_minimal()+ 
+ theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    size = 15, hjust = 1))+
+ coord_fixed()
+
+
+#add nice labels 
+ggheatmap + 
+geom_text(aes(Var2, Var1, label = value), color = "black", size = 3) +
+theme(
+  axis.title.x = element_blank(),
+  axis.title.y = element_blank(),
+  axis.text.x=element_text(size=rel(0.8), angle=90),
+  axis.text.y=element_text(size=rel(0.8)),
+  panel.grid.major = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.ticks = element_blank(),
+  legend.justification = c(1, 0),
+  legend.position = c(0.6, 0.7),
+  legend.direction = "horizontal")+
+  guides(fill = guide_colorbar(barwicrash_training2h = 7, barheight = 2,
+                title.position = "top", title.hjust = 0.5))
+
+```
+The numbers are hard to see but we can use the heat map to figure the correlation levels for each variable. Lets reduce this to a handful of variables a little later on.
+
+
+Lets provide a scatterplot matrix for two of the predictor variables along with the response. Lets also overlay a correlation analysis and see the relationship between said variable and the response variable. 
+```{r}
+library(ggpubr)
+
+ggscatter(trainc, x = "GrLivArea", y = "SalePrice", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Above Grade Living Area", ylab = "Sales Price");
+ggscatter(trainc, x = "LotArea", y = "SalePrice", 
+          add = "reg.line", conf.int = TRUE, 
+          cor.coef = TRUE, cor.method = "pearson",
+          xlab = "Lot Area", ylab = "Sales Price")
+```
+
+Derive a correlation matrix for any THREE variables 
+Lets pick the two variables from the scatter plot and the response variable
+```{r}
+corr_data<-subset(trainc,select=c("X1stFlrSF","LotArea", "SalePrice"))
+
+
+correlation_matrix <- round(cor(corr_data),2)
+
+# Get lower triangle of the correlation matrix
+  get_lower_tri<-function(correlation_matrix){
+    correlation_matrix[upper.tri(correlation_matrix)] <- NA
+    return(correlation_matrix)
+  }
+  # Get upper triangle of the correlation matrix
+  get_upper_tri <- function(correlation_matrix){
+    correlation_matrix[lower.tri(correlation_matrix)]<- NA
+    return(correlation_matrix)
+  }
+  
+  upper_tri <- get_upper_tri(correlation_matrix)
+
+
+
+library(reshape2)
+
+# Melt the correlation matrix
+melted_correlation_matrix <- melt(upper_tri, na.rm = TRUE)
+
+# Heatmap
+library(ggplot2)
+
+ggheatmap <- ggplot(data = melted_correlation_matrix, aes(Var2, Var1, fill = value))+
+ geom_tile(color = "white")+
+ scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+   midpoint = 0, limit = c(-1,1), space = "Lab", 
+   name="Pearson\nCorrelation") +
+  theme_minimal()+ 
+ theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    size = 15, hjust = 1))+
+ coord_fixed()
+
+
+#add nice labels 
+ggheatmap + 
+geom_text(aes(Var2, Var1, label = value), color = "black", size = 3) +
+theme(
+  axis.title.x = element_blank(),
+  axis.title.y = element_blank(),
+  axis.text.x=element_text(size=rel(0.8), angle=90),
+  axis.text.y=element_text(size=rel(0.8)),
+  panel.grid.major = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.ticks = element_blank(),
+  legend.justification = c(1, 0),
+  legend.position = c(0.6, 0.7),
+  legend.direction = "horizontal")+
+  guides(fill = guide_colorbar(barwicrash_training2h = 7, barheight = 1,
+                title.position = "top", title.hjust = 0.5))
+
+```
+
+Test the hypotheses that the correlations between each pairwise set of variables is 0 and provide a 80% confidence interval.  
+```{r}
+cor.test(corr_data$X1stFlrSF, corr_data$SalePrice, method = c("pearson", "kendall", "spearman"), conf.level = 0.8)
+```
+
+```{r}
+cor.test(corr_data$LotArea, corr_data$SalePrice, method = c("pearson", "kendall", "spearman"), conf.level = 0.8)
+```
+
+```{r}
+cor.test(corr_data$X1stFlrSF, corr_data$LotArea, method = c("pearson", "kendall", "spearman"), conf.level = 0.8)
+```
+
+In all three instances, we have generated an 80 percent confidence interval. We should also note the small p value. Hence for the three iterations of testing, we can reject the the null hypothesis and conclude that the true correlation is not 0 for the selected variables. 
+
+Discuss the meaning of your analysis.  Would you be worried about familywise error? Why or why not?
+
+What is a family wise error anyways? It is a measurment of error when it comes to performing several iterations of estimates. This might cause results to be interpreted as being more independent then they really are. Our three tests of correlation had low p values, hence we can use that to derive the familywise error rate. 
+```{r}
+n=3
+
+alpha=(0.5)/n
+
+print(paste0("Familywise error rate is ", 1-alpha))
+
+```
+
+5 points. Linear Algebra and Correlation.  Invert your 3 x 3 correlation matrix from above. (This is known as the precision matrix and contains variance inflation factors on the diagonal.) Multiply the correlation matrix by the precision matrix, and then multiply the precision matrix by the correlation matrix. Conduct LU decomposition on the matrix.  
+
+Correlation matrix
+```{r}
+print(correlation_matrix)
+```
+
+
+Invert correlation matrix
+```{r}
+require(Matrix)
+my_mat <- solve(correlation_matrix)
+print(my_mat)
+```
+
+Multiply the correlation matrix by the precision matrix
+```{r}
+p_mat <- correlation_matrix%*%my_mat
+print(p_mat)
+```
+
+multiply the precision matrix by the correlation matrix.
+```{r}
+x_mat <- p_mat%*%correlation_matrix
+print("We have derived our original correlation matrix")
+print( x_mat)
+```
+
+Conduct LU decomposition on the matrix.  
+```{r}
+lu_mat<-lu(correlation_matrix)
+lu_mat2<-expand(lu_mat)
+print(lu_mat2$L %*% lu_mat2$U)
+```
+
+5 points.  Calculus-Based Probability & Statistics.  Many times, it makes sense to fit a closed form distribution to data.  Select a variable in the Kaggle.com training dataset that  is skewed to the right, shift it so that the minimum value is absolutely above zero if necessary.  Then load the MASS package and run fitdistr to fit an exponential probability density function.  (See https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/fitdistr.html ).  Find the optimal value of λ for this distribution, and then take 1000 samples from this exponential distribution using this value (e.g., rexp(1000, λ)).  Plot a histogram and compare it with a histogram of your original variable.   Using the exponential pdf, find the 5th and 95th percentiles using the cumulative distribution function (CDF).   Also generate a 95% confidence interval from the empirical data, assuming normality.  Finally, provide the empirical 5th percentile and 95th percentile of the data.  Discuss.
+
+Gr Living Area is a variable with a right skew
+```{r}
+plot_histogram(trainc$GrLivArea);
+summary(trainc$GrLivArea)
+```
+
+Gr Living Area does not have a minimum of zero, therefore we do not need to shift the variable. 
+
+Then load the MASS package and run fitdistr to fit an exponential probability density function.  (See  https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/fitdistr.html ).  Find the optimal value of λ for this distribution, and then take 1000 samples from this exponential distribution using this value (e.g., rexp(1000, λ)).  Plot a histogram and compare it with a histogram of your original variable.   
+```{r}
+library(MASS)
+
+dist<-fitdistr(trainc$GrLivArea, densfun = 'exponential')
+lambda <- dist$estimate
+exp_distibution <- rexp(1000, lambda)
+
+summary(exp_distibution);
+plot_histogram(trainc$GrLivArea);
+hist(exp_distibution, main = "Simulated Grade Living Area", xlab="", col = "blue")
+```
+
+Using the exponential pdf, find the 5th and 95th percentiles using the cumulative distribution function (CDF).
+```{r}
+quantile(exp_distibution, c(.05, .95))
+```
+Also generate a 95% confidence interval from the empirical data, assuming normality.  
+```{r}
+library(Rmisc)
+CI(trainc$GrLivArea, ci=0.95)  
+```
+
+Finally, provide the empirical 5th percentile and 95th percentile of the data.  Discuss.
+```{r}
+quantile(trainc$GrLivArea, c(.05, .95))
+```
+
+10 points.  Modeling.  Build some type of multiple  regression  model and submit your model to the competition board.  Provide your complete model summary and results with analysis.  Report your Kaggle.com  user name and score.
+
+When it comes to modeling, there are numerous things that can be done with some more involved than others. I could do PCA decomposition to reduce the dimension of the data. I could also create multiple dummy variables with a degrees of freedom trade off. For the sake of this course, I will keep the model simple and limit them to variables that had decent correlation with Sales Price. 
+
+Lets see how close to the normal distribution our response variable is 
+```{r}
+ggqqplot(trainc$SalePrice);
+
+x <- trainc$SalePrice 
+h<-hist(x, breaks=10, col="red", xlab="Sales Price", 
+    main="Histogram with Normal Curve") 
+xfit<-seq(min(x),max(x),length=40) 
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x)) 
+yfit <- yfit*diff(h$mids[1:2])*length(x) 
+lines(xfit, yfit, col="blue", lwd=2)
+```
+
+It seems that no major transformation needs to be done on the response variable, however we will confirm with diagnostics. 
+
+We examined a heat map based off the correlation matrix. We can use that to our advantage. We can actually systematically go through a process that can identify what predictors have significant correlations with the response variables. 
+```{r}
+cor(trainc[-37], trainc$SalePrice) 
+```
+
+We will take variables with strong positive correlations greater than .5.
+
+```{r}
+mod <- lm(SalePrice~GarageArea+GarageCars+TotRmsAbvGrd+FullBath+GrLivArea+X1stFlrSF+TotalBsmtSF+YearRemodAdd+YearBuilt+OverallQual, data=trainc)
+
+summary(mod)
+```
+
+Garage area and Total Rooms Above grade do not appear to be significant. We have an adjusted R squared value of .77 meaning, 77% of the variability in the data is accounted for. 
+
+Remove non significant predictors and re-fit model
+```{r}
+mod <- lm(SalePrice~GarageCars+FullBath+GrLivArea+X1stFlrSF+TotalBsmtSF+YearRemodAdd+YearBuilt+OverallQual, data=trainc)
+
+summary(mod)
+```
+
+We still retain almost identical adjusted r square with fewer predictors. 
+
+Diagnostics
+```{r}
+hist(mod$residuals);
+qqnorm(mod$residuals);
+qqline(mod$residuals)
+```
+
+The residuals seem to follow a close to normal distribution. We need to check constant variance. 
+```{r}
+library(olsrr)
+ols_test_breusch_pagan(mod)
+```
+A small p value in the Breusch Pagan Test for Heteroskedasticity indicates strong evidence against the null value. We can say that constant variance is not met. Let us check visually. 
+
+```{r}
+plot(fitted(mod), residuals(mod), xlab="fitted", ylab="residuals")
+abline(h=0);
+plot(fitted(mod), sqrt(abs(residuals(mod))), xlab="fitted", ylab=expression(sqrt(hat(epsilon))))
+```
+
+If we look at the residuals, we can see a parabolic shape indicating that some transform needs to be done on the response variable. If we look at the square root of the residuals, the parabolic pattern becomes much more prominant.
+
+We can apply the Box-Cox transform. This worlflow is highlighted in detail in Julian Farayws linear model in r book. 
+```{r}
+library(MASS)
+
+boxcox(mod, plotit=T, lambda=seq(0, 0.2, by=0.01))
+```
+
+According to the transform, the max log-likelihood happens around -2700. We can estimate a parameter lambda by using the center line bounded by the interval roughly (0.07, 0.17). It looks like our power transform is going to be 0.13
+
+
+
+```{r}
+traind<-trainc
+
+mod2 <- lm(SalePrice^(0.13)~GarageCars+FullBath+GrLivArea+X1stFlrSF+TotalBsmtSF+YearRemodAdd+YearBuilt+OverallQual, data=trainc)
+
+summary(mod2)
+```
+
+Residual standard error has decreased significantly while out adjusted r square has increased from .77 to .82.
+
+```{r}
+hist(mod2$residuals);
+qqnorm(mod2$residuals);
+qqline(mod2$residuals)
+```
+
+There is a slight skew introduced into the residuals but it does not appear to be much. Lets visually check constant variance. 
+
+```{r}
+plot(fitted(mod2), resid(mod2), col = "dodgerblue",
+     pch = 20, cex = 1.5, xlab = "Fitted", ylab = "Residuals")
+abline(h = 0, lty = 2, col = "darkorange", lwd = 2)
+```
+
+Lets examine outliers on a top level
+```{r}
+library(car)
+
+outlierTest(mod2)
+```
+
+We have identified several outliers however the low p values indicates that they do not seem to be significant. 
+
+Can we reduce our predictors even more by using variance inflation numbers?
+```{r}
+vif(mod2)
+```
+
+VIF numbers indicate that we do not need to remove additional predictors since there is no VIF number that is unsually large. 
+
+Before we conclude modeling, lets examine all possible permutations of predictors and see their performance based on KPI such as adjusted r square and mallows CP. 
+```{r}
+k<-ols_step_all_possible(mod2)
+plot(k)
+```
+
+From a top level, using all 8 predictors yields the better adjusted r square and reduced the AIC. 
+
+Feature selection at a more detailed level
+```{r}
+h<-ols_step_best_subset(mod2)
+h
+```
+
+It seems that model 4-8 are pretty close in adjusted r square but if any more predictors get removed, there is a sharp drop off. 
+```{r}
+plot(h)
+```
+
+It is easy to keep looking for methods to optimize the model. I would even go as far as saying that a GLM should be considered here but that is outside the scope of the class. 
+
+Lets apply to our test data and make some predictions 
+```{r}
+test_results <- predict(mod2, test)
+
+prediction <- data.frame(Id = test[,"Id"],  SalePrice = test_results)
+
+prediction[prediction<0] <- 0
+
+prediction <- replace(prediction,is.na(prediction),0)
+
+prediction$SalePrice <- prediction$SalePrice^(1/.13)
+
+head(test_results)
+```
+
+```{r}
+write.csv(prediction, "salepricepredictions.csv")
+```
+
+Kaggle results
+Number 4558, posted under Vinicio Haro: 1 submission scored at 0.47026 
